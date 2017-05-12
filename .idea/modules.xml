@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/GomokuBot.iml" filepath="$PROJECT_DIR$/.idea/GomokuBot.iml" />
+      <module fileurl="file://C:\Users\Nitro\PycharmProjects\GomouBot\.idea\GomouBot.iml" filepath="C:\Users\Nitro\PycharmProjects\GomouBot\.idea\GomouBot.iml" />
+    </modules>
+  </component>
+</project>
