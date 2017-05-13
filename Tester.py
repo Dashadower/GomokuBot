@@ -1,9 +1,9 @@
 import random
 from main import GameBoard
-def RandomPopulate(size_x,size_y,Board):
+def RandomPopulate(Board):
 
-    for x in range(1, size_x+1):
-        for y in range(1, size_y+1):
+    for x in range(1, Board.size[0]+1):
+        for y in range(1, Board.size[1]+1):
             if round(random.random()) == 0:
                 Board.AddStone("black",(x,y))
             else:

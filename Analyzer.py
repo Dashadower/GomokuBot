@@ -88,7 +88,7 @@ class Analyzer():
                 print(pattern, "Closed4 +", Closed4Val)
                 score += Closed4Val
         print("Move score:", score)
-        print("End Grader")
+        print("Grader End")
         return score
 
     def Get_8(self, Position):
@@ -104,10 +104,11 @@ def GetDefaultTemplate():
     pass
 
 if __name__ == "__main__":
+    from Tester import RandomPopulate
     starttime = time.time()
     ai = AICore()
     # ai.AddHumanStone((7,7))
-    ai.Board.AddStone("black", (7, 6))
+    """ai.Board.AddStone("black", (7, 6))
     ai.Board.AddStone("black", (7, 7))
     ai.Board.AddStone("black", (7, 8))
     ai.Board.AddStone("black", (7, 9))
@@ -120,7 +121,8 @@ if __name__ == "__main__":
 
     # ai.Board.AddStone("black", (8, 8))
     # ai.Board.AddStone("white", (7, 6))
-    ai.Board.AddStone("white", (6, 6))
+    ai.Board.AddStone("white", (6, 6))"""
+    RandomPopulate(ai.Board)
     print("Black:", ai.Board.BlackStones)
     print("White:", ai.Board.WhiteStones)
     heuristics = Analyzer(ai.Board)
@@ -128,3 +130,9 @@ if __name__ == "__main__":
     heuristics.Grader("black")
     endtime = time.time()
     print("Total calculation time:", endtime-starttime if not endtime-starttime == 0.0 else "0.0 (<0.0001 seconds)")
+    from GomokuBoardUI import GomokuBoard
+    from tkinter import Tk
+    root = Tk()
+    board = GomokuBoard(ai.Board, root)
+    board.Draw()
+    root.mainloop()
