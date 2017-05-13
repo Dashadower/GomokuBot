@@ -14,6 +14,8 @@ class Analyzer():
         pass
 
     def Parser(self, StoneType):
+        """Current Execution time: O(n^2)
+        I should try to minimize this"""
         FoundPatterns = []
         PassedStones = []
         MyStones = self.Board.BlackStones if StoneType == "black" else self.Board.WhiteStones
