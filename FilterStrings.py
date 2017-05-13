@@ -7,7 +7,8 @@
 # -----------------------------------------
 # (Reference)
 # I have also added Open2 for heuristics calculation.
-# However, they pose of low value, but, multiple Open2s can turn into a Open3xOpen3.
+# They pose of low value, but, multiple Open2s can turn into a Open3xOpen3.
+# Also, Open2s can make better decisions in the opening, where making as many threats as possible is good.
 Open2 = [
     "-oo---",
     "--oo--",
@@ -30,22 +31,23 @@ Open3 = [
 Open3Val = 50
 # -----------------------------------------
 # Open4 is a threat in which all the ends of 4 repetitive stones are open
-# If the attacker does not have an Closed4 or Open4 to make into 5, Attacker is guarenteed to win next turn
+# If the attacker does not have an Closed4 or Open4 to make into 5 immediately, Attacker is guarenteed to win next turn
 Open4 = [
     "-oooo-"
 ]
+Open4Val = 10000
 # -----------------------------------------
-# Open5 is win result.
+# Open5 is a win condition.
 Open5 = [
     "xooooo",
     "ooooox",
     "-ooooo",
     "ooooo-",
 ]
-Open5Val = 10000000
+Open5Val = 1000000
 # -----------------------------------------
 # Closed4 is a threat in which one of the ends of 4 repetitive stones are open
-# If the defender does not block the other, end, Attacker is guarenteed to win next turn.
+# If the defender does not block the other end, Attacker is guarenteed to win next turn.
 Closed4 = [
     "xoooo-",
     "-oooox",
