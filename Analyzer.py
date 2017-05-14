@@ -29,6 +29,7 @@ class Analyzer():
         for y in range(1, self.Board.size[1] + 1):
             for x in range(1, self.Board.size[0] + 1):
                 if (x,y) in MyStones and (x,y) not in PassedStones:
+                    #print("vert mystone:",x,y)
                     data = ""
                     for g in range(0,6):
                         if (x,y-1+g) in MyStones and (x,y-1+g) not in PassedStones:
@@ -36,12 +37,11 @@ class Analyzer():
                             PassedStones.append((x,y-1+g))
                         elif (x,y-1+g) in EnemyStones:
                             data += "x"
+                            #break    # This fixed the Problem!!!!!
                         elif y-1+g <= 0 or y-1+g > self.Board.size[1]:
                             data += "x"
                         elif (x,y-1+g) not in MyStones and (x,y-1+g) not in EnemyStones:
                             data += "-"
-                        else:
-                            data += "x"
 
                     if data == "xooooo" or data == "-ooooo":
                         if (x,y+5) in MyStones:
@@ -71,7 +71,7 @@ class Analyzer():
         for x in range(1,self.Board.size[0]+1):
             for y in range(1,self.Board.size[1]+1):
                 if (x,y) in MyStones and (x,y) not in PassedStones:
-
+                    #print("hori mystone:",x,y)
                     data = ""
                     for g in range(0,6):
                         if (x-1+g,y) in MyStones and (x-1+g,y) not in PassedStones:
@@ -79,12 +79,11 @@ class Analyzer():
                             PassedStones.append((x-1+g, y))
                         elif (x-1+g,y) in EnemyStones:
                             data += "x"
+                            #break    # This fixed the Problem!!!!!
                         elif x-1+g <=0 or x-1+g > self.Board.size[0]:
                             data += "x"
                         elif (x-1+g, y) not in MyStones and (x-1+g, y) not in EnemyStones:
                             data += "-"
-                        else:
-                            data += "x"
 
                     if data == "xooooo" or data == "-ooooo":
                         if (x+5,y) in MyStones:
