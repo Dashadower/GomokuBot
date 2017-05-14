@@ -53,8 +53,8 @@ class Analyzer():
                                     checker_increment += 1
                                 else:
                                     break
-                            for x in range(0,checker_increment):
-                                PassedStones.append((x,y+checker_increment))
+                            for value in range(0,checker_increment):
+                                PassedStones.append((x,y+value))
                             print("x6!+ vert", x, y,"to",x,y+checker_increment)
 
                         else:
@@ -96,8 +96,8 @@ class Analyzer():
                                     checker_increment += 1
                                 else:
                                     break
-                            for x in range(0, checker_increment):
-                                PassedStones.append((x+checker_increment,y))
+                            for value in range(0, checker_increment):
+                                PassedStones.append((x+value,y))
                             print("x6!+ hori", x, y, "to", x+checker_increment, y)
                         else:
                             print("okay5 hori",x,y)
@@ -161,7 +161,7 @@ if __name__ == "__main__":
     starttime = time.time()
     board = GameBoard(13,13)
 
-    #board.AddStone("black", (7, 6))
+    board.AddStone("black", (7, 6))
     board.AddStone("black", (7, 7))
     board.AddStone("black", (7, 8))
     board.AddStone("black", (7, 9))
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     board.AddStone("black", (8, 7))
 
     board.AddStone("black", (8, 8))
-    board.AddStone("white", (7, 11))
+    board.AddStone("black", (7, 11))
     board.AddStone("white", (6, 6))
     #RandomPopulate(board)
     print("Black:", board.BlackStones)
