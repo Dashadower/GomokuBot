@@ -37,7 +37,8 @@ class Analyzer():
                             PassedStones.append((x,y-1+g))
                         elif (x,y-1+g) in EnemyStones:
                             data += "x"
-                            #break    # This fixed the Problem!!!!!
+                            if g != 0:
+                                break    # This fixed the Problem!!!!! Push 9818399
                         elif y-1+g <= 0 or y-1+g > self.Board.size[1]:
                             data += "x"
                         elif (x,y-1+g) not in MyStones and (x,y-1+g) not in EnemyStones:
@@ -79,7 +80,8 @@ class Analyzer():
                             PassedStones.append((x-1+g, y))
                         elif (x-1+g,y) in EnemyStones:
                             data += "x"
-                            #break    # This fixed the Problem!!!!!
+                            if g != 0:
+                                break    # This fixed the Problem!!!!! Push 9818399
                         elif x-1+g <=0 or x-1+g > self.Board.size[0]:
                             data += "x"
                         elif (x-1+g, y) not in MyStones and (x-1+g, y) not in EnemyStones:
@@ -158,22 +160,22 @@ if __name__ == "__main__":
     from main import GameBoard
     starttime = time.time()
     board = GameBoard(13,13)
-    # ai.AddHumanStone((7,7))
-    """ai.Board.AddStone("black", (7, 6))
-    ai.Board.AddStone("black", (7, 7))
-    ai.Board.AddStone("black", (7, 8))
-    ai.Board.AddStone("black", (7, 9))
-    ai.Board.AddStone("black", (7, 10))
-    ai.Board.AddStone("black", (6, 7))
-    ai.Board.AddStone("black", (6, 8))
-    ai.Board.AddStone("black", (6, 9))
-    ai.Board.AddStone("black", (6, 10))
-    ai.Board.AddStone("black", (8, 7))
 
-    # ai.Board.AddStone("black", (8, 8))
-    # ai.Board.AddStone("white", (7, 6))
-    ai.Board.AddStone("white", (6, 6))"""
-    RandomPopulate(board)
+    #board.AddStone("black", (7, 6))
+    board.AddStone("black", (7, 7))
+    board.AddStone("black", (7, 8))
+    board.AddStone("black", (7, 9))
+    board.AddStone("black", (7, 10))
+    board.AddStone("black", (6, 7))
+    board.AddStone("black", (6, 8))
+    board.AddStone("black", (6, 9))
+    board.AddStone("black", (6, 10))
+    board.AddStone("black", (8, 7))
+
+    board.AddStone("black", (8, 8))
+    board.AddStone("white", (7, 11))
+    board.AddStone("white", (6, 6))
+    #RandomPopulate(board)
     print("Black:", board.BlackStones)
     print("White:", board.WhiteStones)
     heuristics = Analyzer(board)
