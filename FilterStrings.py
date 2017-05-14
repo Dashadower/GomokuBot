@@ -40,9 +40,9 @@ Open4Val = 10000
 # Open5 is a win condition.
 Open5 = [
     "xooooo",
-    "ooooox",
+    #"ooooox", # the algorithm will not count this as a 5 win , because it is not possible
     "-ooooo",
-    "ooooo-",
+    #"ooooo-", # same as above
 ]
 Open5Val = 1000000
 # -----------------------------------------

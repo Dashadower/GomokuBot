@@ -17,8 +17,8 @@ class GomokuBoard(tkinter.Frame):
         self.stonesize = self.gridsize/2
         self.buffer = 20
 
-        for x in range(self.GameBoard.size[0]+1):
-            for y in range(self.GameBoard.size[1]+1):
+        for x in range(1, self.GameBoard.size[0]+1):
+            for y in range(1, self.GameBoard.size[1]+1):
                 self.GameArea.create_rectangle((self.buffer+50*x,self.buffer+50*y,self.buffer+50*x+50,self.buffer+50*y+50))
         for stone in self.GameBoard.BlackStones:
             x = self.GameBoard.size[0]-stone[0]+1

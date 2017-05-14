@@ -27,35 +27,88 @@ class Analyzer():
         for y in range(1, self.Board.size[1] + 1):
             for x in range(1, self.Board.size[0] + 1):
                 if (x,y) not in PassedStones and (x,y) in MyStones:
-                    if (x,y-1) not in MyStones:
-                        data = ""
-                        for g in range(0,6):
-                            if (x,y-1+g) in MyStones:
-                                data += "o"
-                                PassedStones.append((x,y-1+g))
-                            elif (x,y-1+g) in EnemyStones: data += "x"
-                            else: data += "-"
+                    data = ""
+                    for g in range(0,6):
+                        if (x,y-1+g) not in PassedStones and (x,y-1+g) in MyStones:
+                            data += "o"
+                            PassedStones.append((x,y-1+g))
+                        elif (x,y-1+g) in EnemyStones:
+                            data += "x"
+                        elif y-1+g <= 0:
+                            data += "x"
+                        elif (x,y-1+g) not in MyStones and (x,y-1+g) not in EnemyStones:
+                            data += "-"
+                        else:
+                         data += "x"
 
+                    if data == "xooooo" or data == "-ooooo" and (x,y+5) in MyStones:
+                        checker_increment = 0
+                        while True:
+                            if (x,y+checker_increment+1) in MyStones:
+                                checker_increment += 1
+                            else:
+                                break
+                        for x in range(0,checker_increment+1):
+                            PassedStones.append((x,y+checker_increment))
+                    else:
                         if data.count("o") >= 2:
                             FoundPatterns.append(data)
+                    """
+                    if data[0] == "o":
+                        if data[5] == "o":
+                            data = "oooooo"
+                            for g in range(0,6):
+                                PassedStones.append((x,y-1+g))
+                    elif data[5] == "o":
+                        if data[0] == "o":
+                            data = "oooooo"
+                            for g in range(0,6):
+                                PassedStones.append((x,y-1+g))"""
+
         # Check Horizontal repetitions
         PassedStones = []
         for x in range(1,self.Board.size[0]+1):
             for y in range(1,self.Board.size[1]+1):
                 if (x,y) not in PassedStones and (x,y) in MyStones:
-                    if (x-1,y) not in MyStones:
-                        data = ""
-                        for g in range(0,6):
-                            if (x-1+g,y) in MyStones:
-                                data += "o"
-                                PassedStones.append((x-1+g, y))
-                            elif (x-1+g,y) in EnemyStones:
-                                data += "x"
-                            else:
-                                data += "-"
 
+                    data = ""
+                    for g in range(0,6):
+                        if (x-1+g,y) not in PassedStones and (x-1+g,y) in MyStones:
+                            data += "o"
+                            PassedStones.append((x-1+g, y))
+                        elif (x-1+g,y) in EnemyStones:
+                            data += "x"
+                        elif x-1+g <=0:
+                            data += "x"
+                        elif (x-1+g, y) not in MyStones and (x-1+g, y) not in EnemyStones:
+                            data += "-"
+                        else:
+                            data += "x"
+
+                    if data == "xooooo" or data == "-ooooo" and (x+5,y) in MyStones:
+                        checker_increment = 0
+                        while True:
+                            if (x+checker_increment+1,y) in MyStones:
+                                checker_increment += 1
+                            else:
+                                break
+                        for x in range(0, checker_increment + 1):
+                            PassedStones.append((x+checker_increment,))
+                    else:
                         if data.count("o") >= 2:
                             FoundPatterns.append(data)
+                    """if data[0] == "o":
+                        if data[5] == "o":
+                            data = "oooooo"
+                            for g in range(0,6):
+                                PassedStones.append((x-1+g,y))
+                    elif data[5] == "o":
+                        if data[0] == "o":
+                            data = "oooooo"
+                            for g in range(0,6):
+                                PassedStones.append((x-1+g,y))"""
+
+
         PassedStones = []
         startpos_x = 1
         startpos_y = 1
