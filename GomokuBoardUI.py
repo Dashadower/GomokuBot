@@ -34,7 +34,7 @@ class GomokuBoard(tkinter.Frame):
         for stone in self.GameBoard.WhiteStones:
             x = stone[0]-1
             y = self.GameBoard.size[1]-stone[1]
-            self.GameArea.create_oval((self.buffer+x*self.gridsize-self.stonesize, self.buffer+y*self.gridsize+self.stonesize, self.buffer+x*self.gridsize+self.stonesize,self.buffer+y*self.gridsize-self.stonesize),fill="white")
+            self.GameArea.create_oval((self.buffer+x*self.gridsize-self.stonesize, self.buffer+y*self.gridsize+self.stonesize, self.buffer+x*self.gridsize+self.stonesize,self.buffer+y*self.gridsize-self.stonesize),fill="white",outline="white")
 
 if __name__ == "__main__":
     from main import GameBoard
