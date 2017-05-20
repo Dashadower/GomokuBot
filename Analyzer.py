@@ -59,13 +59,13 @@ class Analyzer():
 
                         else:
                             print("open5 vert",x,y)
-                            if data.count(("o")) >=2:
+                            if data.count("o") >=2:
                                 FoundPatterns.append(data)
                     else:
                         if data.count("o") >= 2:
                             FoundPatterns.append(data)
 
-        print("vert Passedstones:",PassedStones)
+        #print("vert Passedstones:",PassedStones)
 
         # Check Horizontal repetitions
         PassedStones = []
@@ -107,10 +107,86 @@ class Analyzer():
                         if data.count("o") >= 2:
                             FoundPatterns.append(data)
 
-        print("Hori PassedStones:",PassedStones)
+        #print("Hori PassedStones:",PassedStones)
         PassedStones = []
-        startpos_x = 1
-        startpos_y = 1
+
+        # check 2o`clock diagonal from 1,1 repetitions
+        for x in range(1, self.Board.size[0] + 1):
+            for y in range(0, x): # stone coord: (x-y,y+1)
+                if (x-y,y+1) in MyStones and (x-y,y+1) not in PassedStones:
+                    data = ""
+                    for g in range(0,6):
+                        if (x-y-1+g,y+1-1+g) in MyStones and (x-y-1+g,y+1-1+g) not in PassedStones:
+                            data += "o"
+                            PassedStones.append((x-y-1+g,y+1-1+g))
+                        elif (x-y-1+g,y+1-1+g) in EnemyStones:
+                            data += "x"
+                            if g != 0:
+                                break
+                        elif x-y-1+g <= 0 or x-y-1+g > self.Board.size[0] or y+1-1+g <= 0 or y+1-1+g > self.Board.size[1]:
+                            data += "x"
+                        elif (x-y-1+g,y+1-1+g) not in MyStones and (x-y-1+g,y+1-1+g) not in EnemyStones:
+                            data += "-"
+
+                    if data == "xooooo" or data == "-ooooo":
+                        if (x-y+5,y+1+5) in MyStones:
+                            checker_increment = 0
+
+                            while True:
+                                if (x-y+checker_increment+1,y+1+checker_increment+1) in MyStones:
+                                    checker_increment += 1
+                                else:
+                                    break
+                            for value in range(0,checker_increment):
+                                PassedStones.append((x-y+value,y+1+value))
+                            print("open6+ diag2",x-y,y+1,"to",x-y+checker_increment,y+1+checker_increment)
+                        else:
+                            print("open5 diag2",x-y,y+1)
+                            if data.count("o") >= 2:
+                                FoundPatterns.append(data)
+                    else:
+                        if data.count("o") >= 2:
+                            FoundPatterns.append(data)
+                #print(x - y, y + 1)
+
+        # check 5o`clock diagonal from 1,13 reptitions #@@@@@@@@@@@@@@@@@@@@@@@ 5o`clock double starting for loops need rework to make it start from 1,13 to 13,1
+        """for y in range(2, self.Board.size[1] + 1):
+            for x in range(self.Board.size[0], y - 1, -1): # stone coord(x-y,y+1),but each time in g traverse, sub from both x and y
+                if (x-y,y+1) in MyStones and (x-y,y+1) not in PassedStones:
+                    data = ""
+                    for g in range(0,6):
+                        if (x-y-1-g,y+1+1-g) in MyStones and (x-y-1-g,y+1+1-g) not in PassedStones:
+                            data += "o"
+                            PassedStones.append((x-y-1-g,y+1+1-g))
+                        elif (x-y-1-g,y+1+1-g) in EnemyStones:
+                            data += "x"
+                            if g != 0:
+                                break
+                        elif x-y-1-g <= 0 or x-y-1-g > self.Board.size[0] or y+1+1-g <= 0 or y+1+1-g > self.Board.size[1]:
+                            data += "x"
+                        elif (x-y-1-g,y+1+1-g) not in MyStones and (x-y-1-g,y+1+1-g) not in EnemyStones:
+                            data += "-"
+
+                    if data == "xooooo" or data == "-ooooo":
+                        if (x-y-5,y+1-5) in MyStones:
+                            checker_increment = 0
+
+                            while True:
+                                if (x-y-checker_increment-1,y+1-checker_increment-1) in MyStones:
+                                    checker_increment += 1
+                                else:
+                                    break
+                            for value in range(0,checker_increment):
+                                PassedStones.append((x-y-value,y+1-value))
+                            print("open6+ diag5",x-y,y+1,"to",x-y-checker_increment,y+1-checker_increment)
+                        else:
+                            print("open5 diag5",x-y,y+1)
+                            if data.count("o") >= 2:
+                                FoundPatterns.append(data)
+                    else:
+                        if data.count("o") >= 2:
+                            FoundPatterns.append(data)"""
+                #print(x, y + (self.Board.size[1] - x))
 
 
         print(FoundPatterns)
