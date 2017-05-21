@@ -216,7 +216,7 @@ class Analyzer():
                                 else:
                                     break
                             for value in range(0,checker_increment):
-                                PassedStones.append((x+checker_increment,x-yy-checker_increment))
+                                PassedStones.append((x+checker_increment,x-y-checker_increment))
                             print("open6+ diag5",x,x-y,"to",x+checker_increment,x-y-checker_increment)
                         else:
                             print("open5 diag5",x,x-y)
