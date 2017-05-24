@@ -18,8 +18,8 @@ class AICore():
     def GenerateCustomGameBoard(self, GameState, Position, StoneType):
         """Generates a custom GameBoard class, merging the previous GameState GameBoard and a new stone type StoneType on position Position"""
         Stones = {}
-        BlackStones = [x for x in GameState["black"]]
-        WhiteStones = [x for x in GameState["white"]]
+        BlackStones = [x for x in GameState.BlackStones]
+        WhiteStones = [x for x in GameState.WhiteStones]
         Stones["black"] = BlackStones
         Stones["white"] = WhiteStones
         Stones[StoneType].append(Position)
@@ -48,6 +48,7 @@ class AICore():
     def AddAIStone(self, Position):
         """updates self.Board by adding a stone to the AI stone type"""
         self.Board.AddStone(self.AIStoneType, Position)
+        print("ADDED AI STONE AT",Position,"type is ",self.AIStoneType)
 
 
 class AlphaBeta(AICore):
@@ -69,7 +70,7 @@ class AlphaBeta(AICore):
             if avaliablemoves[key] > bestvalue:
                 bestvalue = avaliablemoves[key]
                 bestpos = key
-
+        print("reached")
         self.AddAIStone(bestpos)
 
     def AlPhaBeta(self,GameState,depth,a,b,IsMaximizingTurn):
@@ -93,3 +94,8 @@ class AlphaBeta(AICore):
                     break
             return v
 
+if __name__ == "__main__":
+    board = GameBoard(3,3)
+    ai = AlphaBeta(board,plydepth=3)
+    ai.AddHumanStone((3,3))
+    ai.ChooseMove()
