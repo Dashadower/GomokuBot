@@ -1,21 +1,21 @@
+from MonteCarlo import MonteCarlo
 from main import GameBoard
-from AICore import AlphaBeta,MiniMax
-"""board = GameBoard(5,5)
-ai = MiniMax(board,plydepth=3)
+from Analyzer import WinChecker
+board = GameBoard(10,10)
+ai = MonteCarlo(board,searchrange=3,TimeLimit=None,GameLimit=100)
+refree = WinChecker(board)
 while True:
     print("Current Board white:",board.WhiteStones,"black:",board.BlackStones)
     x,y = input("Enter Human position with comma in between ex x,y:").split(",")
-    ai.AddHumanStone((x,y))
-    if ai.CheckWin("black"):
+    ai.AddHumanStone((int(x),int(y)))
+    if refree.Check("black"):
         print("BLACK WIN!!!!!")
         break
-    ai.ChooseMove()
-    if ai.CheckWin("white"):
+    data = ai.ChooseMove()
+    ai.AddAIStone(data[0])
+    print("AI WINRATE",data[1])
+    if refree.Check("white"):
         print("WHITE AI WIN!!!!!")
-        break"""
-from AICore import AICore
-b = GameBoard(3,3)
-b.AddStone("black",(3,3))
-print(b.BlackStones)
-d = AICore(b)
-print(d.GetOpenMoves(b))
+        break
+
+

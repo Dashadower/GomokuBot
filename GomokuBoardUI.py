@@ -38,7 +38,7 @@ class GomokuBoard(tkinter.Frame):
 
 if __name__ == "__main__":
     from main import GameBoard
-    board = GameBoard(5,5)
+    board = GameBoard(10,10)
     root = tkinter.Tk()
     boardui = GomokuBoard(board,root)
     boardui.Draw()

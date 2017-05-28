@@ -4,14 +4,16 @@ class GameBoard():
         self.stones = []
         self.BlackStones = []
         self.WhiteStones = []
+
         self.Moves = 0
 
     def AddStone(self, StoneType, Position): # Position: (x,y) tuple
         if StoneType == "black":
             self.BlackStones.append(Position)
+            self.stones.append(Position)
         elif StoneType == "white":
             self.WhiteStones.append(Position)
-
+            self.stones.append(Position)
         self.Moves += 1
 
 if __name__ == "__main__":
