@@ -2,7 +2,22 @@ from AICore import AICore
 from Analyzer import WinChecker
 import threading, math, time,random, queue
 from main import GameBoard
-
+"""THREAD PROTOCOL
+1.THREAD CREATION move,GameState,ReportQueue,AIStoneType,searchrange,TimeLimit=10,GameLimit=None: 
+    Thread creation is explicitly done within the MonteCarlo class. no protocols
+    move: current move being evaluated
+    GameState: GameBoard object WITH move inserted
+    ReportQueue: Queue in which RESULT are sent
+    AIStoneType: -
+    searchrange: smart open move searcher range
+    timelimit: thread simulation time limit
+    gamelimit: thread simulation max number of games
+2. RESULT
+    The following tuple format is put into ReportQueue:
+    (move,totalsims,wins)
+    move: move simulated
+    totalsims: total number of simulations done on thread
+    wins: total number of AIStoneType WINNING simulations"""
 
 class MonteCarlo(AICore):
     def __init__(self, board=None, reportui=None, aistoneType="white",searchrange=4, TimeLimit=10,GameLimit=None,threadlimit=None):
