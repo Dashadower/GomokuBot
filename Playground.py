@@ -8,7 +8,7 @@ if __name__ == "__main__":
     board = GameBoard(10,10)
 
     #ai = MonteCarlo(board,searchrange=3,TimeLimit=None,GameLimit=100)
-    ai = MultiProcessedMCTC(board,searchrange=3,TimeLimit=15,GameLimit=None,processlimit=6)
+    ai = MultiProcessedMCTC(board,searchrange=2,TimeLimit=10,GameLimit=None,processlimit=8)
     ai.InitiateProcess()
     refree = WinChecker(board)
     while True:
