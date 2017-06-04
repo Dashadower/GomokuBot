@@ -8,3 +8,4 @@ def RandomPopulate(Board):
                 Board.AddStone("black",(x,y))
             else:
                 Board.AddStone("white",(x,y))
+
