@@ -24,10 +24,64 @@ class AICore():
         Stones["white"] = WhiteStones
         Stones[StoneType].append(Position)
         board = GameBoard(self.Board.size[0], self.Board.size[1])
-        board.WhiteStones = Stones["white"]
+        board.AddStone("white", y for y in range(x))
         board.BlackStones = Stones["black"]
-        board.Moves = len(Stones["black"])+len(Stones["white"])
+
         return board
+
+    def DuplicateBoard(self, Board):
+        g = GameBoard(Board.size[0], Board.size[1])
+
+        for x in Board.WhiteStones:
+            g.AddStone("white", x)
+        for y in Board.BlackStones:
+            g.AddStone("black", y)
+        return g
+
+    def GetOpenMovesPlus(self,board):
+        """Returns available unoccupied positions  within a square of the outermost stones + range
+        Used to reduce number of simulations"""
+
+        low = [board.size[0],board.size[1]]
+        high = [1,1]
+        OpenMoves = []
+
+        for stone in board.stones:
+
+            if stone[0] < low[0]:
+                low[0] = stone[0]
+            if stone[0] > high[0]:
+                high[0] = stone[0]
+            if stone[1] < low[1]:
+                low[1] = stone[1]
+            if stone[1] > high[1]:
+                high[1] = stone[1]
+        if low[0] > self.SearchRange:
+            low[0] -= self.SearchRange
+        else:
+            low[0] = 1
+        if low[1] > self.SearchRange:
+            low[1] -= self.SearchRange
+        else:
+            low[1] = 1
+        if high[0] < board.size[0]-self.SearchRange:
+            high[0] += self.SearchRange
+        else:
+            high[0] = board.size[0]
+        if high[1] < board.size[1]-self.SearchRange:
+            high[1] += self.SearchRange
+        else:
+            high[1] = board.size[1]
+
+
+        for x in range(low[0],high[0]+1):
+            for y in range(low[1],high[1]+1):
+                if (x,y) in board.BlackStones or (x,y) in board.WhiteStones:
+                    pass
+                else:
+                    OpenMoves.append((x, y))
+
+        return OpenMoves
 
     def GetOpenMoves(self, GameState):
         """Returns all available unoccupied positions in the board"""
