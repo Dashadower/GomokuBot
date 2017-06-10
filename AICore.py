@@ -3,14 +3,14 @@ from Analyzer import Heuristics, WinChecker
 
 
 class AICore():
-    def __init__(self, board=None, aistoneType="white"):
+    def __init__(self, board=None, aistoneType="white",searchrange=4):
         if not board:
             self.Board = GameBoard(13, 13)
             self.CustomBoard = False
         else:
             self.Board = board
             self.CustomBoard = True
-
+        self.SearchRange = searchrange
         self.AIStoneType = aistoneType
 
 
@@ -23,10 +23,15 @@ class AICore():
         Stones["black"] = BlackStones
         Stones["white"] = WhiteStones
         Stones[StoneType].append(Position)
-        board = GameBoard(self.Board.size[0], self.Board.size[1])
-        board.AddStone("white", y for y in range(x))
-        board.BlackStones = Stones["black"]
-
+        board = GameBoard(GameState.size[0], GameState.size[1])
+        for stone in Stones["black"]:
+            board.AddStone("black",stone)
+        for stone in Stones["white"]:
+            board.AddStone("white",stone)
+        if len(board.BlackStones) > len(board.WhiteStones):
+            board.turn = "white"
+        else:
+            board.turn = "black"
         return board
 
     def DuplicateBoard(self, Board):

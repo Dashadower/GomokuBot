@@ -20,14 +20,32 @@ from main import GameBoard
     wins: total number of AIStoneType WINNING simulations"""
 
 class MonteCarlo(AICore):
-    def __init__(self, board=None, reportui=None, aistoneType="white",searchrange=4, TimeLimit=10):
+    def __init__(self, board=None, reportui=None, aistoneType="white", TimeLimit=10):
         AICore.__init__(self, board, aistoneType)
         self.TimeLimit = TimeLimit
 
         self.ReportUI = reportui
-        self.SearchRange = searchrange
         if self.AIStoneType == "black":
             self.AddAIStone((round(self.Board.size[0]/2),round(self.Board.size[1]/2)))
+    def ChooseMove(self):
+        returnqueue = queue.Queue()
+        chooser = MCTSActuator(self.Board,returnqueue,self.AIStoneType,self.TimeLimit)
+        chooser.start()
+        return self.check(returnqueue)
+    def check(self,queueobj):
+        data = queueobj.get()
+        if not data:
+            if self.ReportUI:
+                self.ReportUI.after(100,lambda:self.check(queueobj))
+            else:
+                time.sleep(0.1)
+                self.check(queueobj)
+        else:
+            position = data.pos
+            winrate = data.Wins/data.Simulations*100
+            return (position,winrate)
+
+
 
 
 
@@ -37,102 +55,109 @@ class MonteCarlo(AICore):
 
 
 class MCTSActuator(threading.Thread,AICore):
-    def __init__(self,move,GameState,ReportQueue,AIStoneType,searchrange,TimeLimit=10):
+    def __init__(self,GameState,ReportQueue,AIStoneType,TimeLimit=10,searchrange=4):
         threading.Thread.__init__(self)
+
         self.Event = threading.Event()
         self.GameState = GameState
-        self.SearchRange = searchrange
+
 
         self.AIStoneType = AIStoneType
-        self.MyMove = move
+        self.SearchRange = searchrange
         self.EnemyStoneType = "white" if self.AIStoneType == "black" else "black"
         self.TimeLimit = TimeLimit
         self.ReportQueue = ReportQueue
         self.Wins = 0
         self.Simulations = 0
 
+
     def start(self):
         starting_state = Node(self.GameState)
-
+        self.starttime = time.time()
         for move in self.GetOpenMovesPlus(self.GameState):
-            Node(super().GenerateCustomGameBoard(starting_state,move,self.AIStoneType),parent=starting_state)
+            Node(super().GenerateCustomGameBoard(starting_state.gamestate,move,self.AIStoneType),parent=starting_state,pos=move)
         self.iterate(starting_state)
-    def iterate(self,currentstate):
-        while True:
-            if currentstate.children:
-                if currentstate.traversals == 0:
-                    # rollout
-                    result = self.simulate(currentstate)
-                    currentstate.backpropogate(result)
-                elif currentstate.traversals != 0:
-                    for move in self.GetOpenMoves(currentstate):
-                        Node(super().GenerateCustomGameBoard(currentstate,move,))
-                """uctvalues = []
-    
+        ucbvalues = []
+        for child in starting_state.children:
+            ucbvalues.append((child, UCT(child.wins, child.traversals, starting_state.traversals)))
+        ucbvalues = sorted(ucbvalues, key=lambda x: x[1], reverse=True)
+        self.ReportQueue.put(ucbvalues[0][0])
+    def iterate(self,currentstates):
+
+        print("ctime:",time.time()-self.starttime)
+        currentstate = currentstates
+        while time.time()-self.starttime <= float(self.TimeLimit):  # @@@@@@@@@@@ NOT WORKING!! STOPPED IN LOOP
+            print("loop",time.time()-self.starttime,currentstate)
+            if not currentstate.children:  # check if terminal node
+                if currentstate.traversals == 0:  # check if visited
+                    # not visited, rollout
+                    self.simulate(currentstate)
+
+                elif currentstate.traversals != 0:  # already visited
+                    cturn = currentstate.gamestate.turn
+                    for move_1 in self.GetOpenMovesPlus(currentstate.gamestate):
+                        newgamestate = self.GenerateCustomGameBoard(currentstate.gamestate,move_1,cturn)
+                        for move_2 in self.GetOpenMovesPlus(newgamestate):
+                            newturn = "black" if cturn == "white" else "black"
+                            finalgamestate = self.GenerateCustomGameBoard(newgamestate,move_2,newturn)
+                            Node(finalgamestate,currentstate)
+                            self.simulate(currentstate.children[0])
+                            currentstate = currentstate.children[0]
+            elif currentstate.children:
+                ucbvalues = []
                 for child in currentstate.children:
-                    uctvalues.append((child,UCT(child.wins,child.traversals,currentstate.traversals)))
-                uctvalues = sorted(uctvalues,key=lambda x: uctvalues[x][1],reverse=True)
+                    ucbvalues.append((child,UCT(child.wins,child.traversals,currentstate.traversals)))
+                ucbvalues = sorted(ucbvalues, key=lambda x: x[1], reverse=True)
+                currentstate = ucbvalues[0][0]
+
+            print("reached")
+
+
     
-                selection_state = uctvalues[0][0]
-    
-                if not selection_state.children:  # check if is terminal node
-                    if selection_state.traversals == 0:  # check if it has NOT been visited(traversed)
-                        result = self.simulate(selection_state.gamestate)  # simulate random playout to end
-                        selection_state.backpropogate(result)
-    
-                    elif selection_state.traversals != 0:  # requires work on. UNFINISHED
-                        for move in super().GetOpenMovesPlus(selection_state):
-                            pass
-                        uctvalues = []
-                        for child in currentstate.children:
-    
-                            uctvalues.append((child, UCT(child.wins, child.traversals, currentstate.traversals)))
-                        uctvalues = sorted(uctvalues, key=lambda x: uctvalues[x][1], reverse=True)
-    
-                        selection_state = uctvalues[0][0]
-    
-                elif selection_state.children:
-                    self.iterate()"""
+
 
 
 
     def simulate(self,gamestate):
-        if len(gamestate.BlackStones) == len(gamestate.WhiteStones):
-            turn = self.AIStoneType if self.AIStoneType == "black" else self.EnemyStoneType
-        elif len(gamestate.BlackStones) > len(gamestate.WhiteStones):
-            turn = self.AIStoneType if self.AIStoneType == "white" else self.EnemyStoneType
-        board = super().DuplicateBoard(gamestate)
-        winchecker = WinChecker(board)
+        turn = self.AIStoneType if gamestate.gamestate.turn == self.AIStoneType else self.EnemyStoneType
+        board = super().DuplicateBoard(gamestate.gamestate)
+        winchecker = WinChecker(board,debug=False)
         while True:
 
             if not super().GetOpenMovesPlus(board):
                 wins = 0
+
                 break
-            board.AddStone(turn,random.choice(super().GetOpenMovesPlus(board)))
-            if winchecker.Check(turn) and turn == self.AIStoneType:
-                wins = 1
-                break
-            elif winchecker.Check(turn) and turn == self.EnemyStoneType:
-                wins = -1
-                break
-            turn = self.EnemyStoneType if turn == self.AIStoneType else self.AIStoneType
-        return wins
+            else:
+                board.AddStone(turn,random.choice(super().GetOpenMovesPlus(board)))
+                if winchecker.Check(turn) and turn == self.AIStoneType:
+                    wins = 1
+
+                    break
+                elif winchecker.Check(turn) and turn == self.EnemyStoneType:
+                    wins = -1
+
+                    break
+                turn = self.EnemyStoneType if turn == self.AIStoneType else self.AIStoneType
+
+        gamestate.backpropogate(wins)
 
 class Node():
-    def __init__(self, gamestate, parent=None):
+    def __init__(self, gamestate, parent=None,pos=None):
         self.gamestate = gamestate
         self.parent = parent
         self.children = []
         self.traversals = 0
         self.wins = 0
+        self.pos = pos
         if parent:
             self.parent.registerchild(self)
 
-    def backpropogate(self, wins=1):
+    def backpropogate(self, winsval=1):
         self.traversals += 1
-        self.wins += wins
+        self.wins += winsval
         if self.parent:
-            self.parent.backpropogate(wins)
+            self.parent.backpropogate(winsval)
 
     def registerchild(self, child):
         self.children.append(child)
@@ -144,4 +169,7 @@ def UCT(wi, ni, t, c=math.sqrt(2)):
     ni : number of simulations after ith move
     c  : exploration parameter. default is sqrt(2)
     t  : total number of simulations (ni of parents node) sum of all ni"""
-    return wi/ni + c*math.sqrt(math.log(t)/ni)
+    if ni == 0:
+        return 0
+    else:
+        return wi/ni + c*math.sqrt(math.log(t)/ni)
