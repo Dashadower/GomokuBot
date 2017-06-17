@@ -27,6 +27,7 @@ class GomokuBoard(tkinter.Frame):
         return (x_grid_pos,y_grid_pos)
     def clear(self):
         self.GameArea.delete("all")
+
     def AddStoneShape(self,color,position):
         position_x = position[0]-1
         position_y = self.GameBoard.size[1]-position[1]

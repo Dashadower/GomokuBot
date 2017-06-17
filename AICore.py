@@ -1,6 +1,6 @@
 from main import GameBoard
-from Analyzer import Heuristics, WinChecker
-
+from Analyzer import Heuristics, WinChecker, AdvancedAnalyzer
+from FilterStrings import Open2, Open3, Open4, Open5, Closed4
 
 class AICore():
     def __init__(self, board=None, aistoneType="white",searchrange=4):
@@ -109,113 +109,29 @@ class AICore():
         self.Board.AddStone(self.AIStoneType, Position)
         print("ADDED AI STONE AT",Position,"type is ",self.AIStoneType)
 
+class ThreatSpaceSearch():
+    def __init__(self,board,aistonetype):
+        self.board = board
+        self.aistonetype = aistonetype
+        self.enemystonetype = "white" if self.aistonetype == "black" else "black"
+        analyzer = AdvancedAnalyzer(self.board)
+    def check(self):
+        current_ai_threats = AdvancedAnalyzer.Parser(self.aistonetype)
+        current_enemy_threats = AdvancedAnalyzer.Parser(self.enemystonetype)
+        for stone in current_enemy_threats:
+            if stone[0] in Closed4:
+                if stone[2] == "vert":
+                    if (stone[1][0],stone[1][1]-1) not in self.board.stones:
+                        return (stone[1][0],stone[1][1]-1)
+                    elif (stone[1][0],stone[1][1]-1) in self.board.stones:
+                        return (stone[1][0],stone[1][1]+4)
+                elif stone[2] == "hori":
+                    if (stone[1][0]-1,stone[1][1]) not in self.board.stones:
+                        return (stone[1][0]-1,stone[1][1])
+                    elif (stone[1][0]-1,stone[1][1]) in self.board.stones:
+                        return (stone[1][0]+1,stone[1][1])
 
 
-class MiniMax(AICore):
-    def __init__(self, board=None, aistoneType="white",plydepth=10,threads=1):
-        self.PlyDepth = plydepth
-        self.threads = threads
-        AICore.__init__(self,board,aistoneType)
-        if self.AIStoneType == "black":
-            self.AddAIStone((round(self.Board.size[0]/2),round(self.Board.size[1]/2)))
-
-    def ChooseMove(self):
-        avaliablemoves = {}
-        for moves in self.GetOpenMoves(self.Board):
-            movevalue = self.MiniMax(self.Board, self.PlyDepth,True)
-            avaliablemoves[moves] = movevalue
-
-        bestvalue = -100000000
-        cpos = ()
-        for key in avaliablemoves.keys():
-            print(key, avaliablemoves[key])
-            if avaliablemoves[key] > bestvalue:
-                bestvalue = avaliablemoves[key]
-                cpos = key
-
-        # avaliablemoves = sorted(avaliablemoves,key= lambda x:avaliablemoves[x],reverse=True)
-        self.AddAIStone(cpos)
-
-    def MiniMax(self,GameState,depth,IsMaximizingTurn):
-        print("depth",depth)
-        enemystonetype = "white" if self.AIStoneType == "black" else "white"
-        if depth == 0:
-            return Heuristics(GameState,self.AIStoneType,debug=False).GetValue(IsMaximizingTurn)
-        if IsMaximizingTurn:
-            bestvalue = -1000000
-            for paths in self.GetOpenMoves(GameState):
-                v = self.MiniMax(self.GenerateCustomGameBoard(GameState,paths,enemystonetype),depth-1,False)
-                bestvalue = max(bestvalue,v)
-
-            return bestvalue
-        else:
-            bestvalue = 1000000
-            for paths in self.GetOpenMoves(GameState):
-                v = self.MiniMax(self.GenerateCustomGameBoard(GameState,paths,self.AIStoneType),depth-1,True)
-                bestvalue = min(bestvalue,v)
-            return bestvalue
-
-    def CheckWin(self,stonetype):
-        if WinChecker(self.Board).Check(stonetype):
-            return True
-        else:
-            return False
-
-class AlphaBeta(AICore):
-    def __init__(self, board=None, aistoneType="white",plydepth=10,threads=1):
-        self.PlyDepth = plydepth
-        self.threads = threads
-        AICore.__init__(self,board,aistoneType)
-        if self.AIStoneType == "black":
-            self.AddAIStone((round(self.Board.size[0]/2),round(self.Board.size[1]/2)))
-
-    def ChooseMove(self):
-        avaliablemoves = {}
-        for moves in self.GetOpenMoves(self.Board):
-            movevalue = self.AlPhaBeta(self.Board,self.PlyDepth,-1000000,1000000,True)
-            avaliablemoves[moves] = movevalue
-
-        bestvalue = -100000000
-        cpos = ()
-        for key in avaliablemoves.keys():
-            print(key,avaliablemoves[key])
-            if avaliablemoves[key] > bestvalue:
-                bestvalue = avaliablemoves[key]
-                cpos = key
-
-        #avaliablemoves = sorted(avaliablemoves,key= lambda x:avaliablemoves[x],reverse=True)
-        self.AddAIStone(cpos)
-
-    def AlPhaBeta(self,GameState,depth,a,b,IsMaximizingTurn):
-        print("depth",depth)
-        enemystonetype = "white" if self.AIStoneType == "black" else "white"
-        if depth == 0:
-            return Heuristics(GameState,self.AIStoneType,debug=False).GetValue(IsMaximizingTurn)
-        if IsMaximizingTurn:
-            v = -1000000
-            for paths in self.GetOpenMoves(GameState):
-                v = max(v,self.AlPhaBeta(self.GenerateCustomGameBoard(GameState,paths,enemystonetype),depth-1,a,b,False))
-                a = max(a,v)
-                if b <= a:
-                    break
-            return v
-        else:
-            v = 1000000
-            for paths in self.GetOpenMoves(GameState):
-                v = min(v,self.AlPhaBeta(self.GenerateCustomGameBoard(GameState,paths,self.AIStoneType),depth-1,a,b,True))
-                b = min(b,v)
-                if b <= a:
-                    break
-            return v
-
-    def CheckWin(self,stonetype):
-        if WinChecker(self.Board).Check(stonetype):
-            return True
-        else:
-            return False
 
 if __name__ == "__main__":
-    board = GameBoard(3,3)
-    ai = AlphaBeta(board,plydepth=3)
-    ai.AddHumanStone((3,3))
-    ai.ChooseMove()
+    pass
