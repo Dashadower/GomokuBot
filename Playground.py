@@ -10,7 +10,7 @@ if __name__ == "__main__":
     from main import GameBoard
     from Analyzer import WinChecker
     import time,tkinter,threading
-    from AICore import AlphaBeta
+    #from AICore import AlphaBeta
     board = GameBoard(10,10)
 
 

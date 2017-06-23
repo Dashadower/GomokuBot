@@ -1,5 +1,5 @@
 from AICore import AICore
-from Analyzer import WinChecker
+from Analyzer import WinChecker, Analyzer
 import threading, math, time, random, multiprocessing
 
 
@@ -93,39 +93,41 @@ class MCTSActuator(AICore):
 
                     final_choice = uctvalues[0][0]
                     print("final",uctvalues)
-                    self.outputqueue.put((final_choice.position, final_choice.simulations, final_choice.wins))
+                    self.outputqueue.put((final_choice.position, final_choice.traversals, final_choice.wins))
 
     def iterate(self, currentstate):
         print("currentstate",currentstate.position)
+
         start_state = currentstate
         starttime = time.time()
         while time.time() - starttime <= self.TimeLimit:
             print("current",start_state.position)
+            print("currentstate values", currentstate.wins, currentstate.traversals)
             #start_state.backpropogate(wins=0,simulations=0,traversals=1)
             if start_state.children:
                 #print("children",start_state.children)
                 uctvalues = []
 
                 for child in start_state.children:
-                    uctvalues.append((child, UCT(child.wins, child.simulations, currentstate.simulations)))
+                    uctvalues.append((child, UCT(child.wins, child.traversals, currentstate.traversals)))
                 random.shuffle(uctvalues)
                 uctvalues = sorted(uctvalues, key=lambda x: x[1], reverse=True)
                 #print("children uct",uctvalues)
                 selection_state = uctvalues[0][0]
 
-                print("current is highest child",selection_state.position,uctvalues[0][1])
+                #print("current is highest child",selection_state.position,uctvalues[0][1])
                 start_state = selection_state
 
 
             elif not start_state.children:
-                print("no child")
+                #print("no child")
                 avaliablemoves = super().GetOpenMovesPlus(start_state.gamestate)
                 if avaliablemoves:
                     random.shuffle(avaliablemoves)
                     first_move = avaliablemoves[0]
                     first_child = Node(super().GenerateCustomGameBoard(start_state.gamestate,first_move,start_state.gamestate.turn),parent=start_state,position=first_move)
 
-                    print("created 1 move,",first_move,"child backpropagate")
+                    #print("created 1 move,",first_move,"child backpropagate")
                     first_child.backpropogate(self.simulate(first_child.gamestate),traversals=1)
                     start_state = currentstate
                 elif not avaliablemoves:
@@ -152,7 +154,15 @@ class MCTSActuator(AICore):
                 else:
                     wins = 0
                     break
-            board.AddStone(turn, random.choice(super().GetOpenMovesPlus(board)))
+            hvalues = []
+            for stone in super().GetOpenMovesPlus(board):
+                edited_board = super().GenerateCustomGameBoard(board,stone,turn)
+                heuristicvalue = Analyzer(edited_board).Grader(turn) + -Analyzer(edited_board).Grader(self.EnemyStoneType if turn == self.AIStoneType else self.AIStoneType)
+                hvalues.append((stone,heuristicvalue))
+            hvalues = sorted(hvalues, key=lambda x: x[1], reverse=True)
+            final_choice = hvalues[0][0]
+            print("Heuristics:",final_choice,turn,hvalues[0][1])
+            board.AddStone(turn, final_choice) # change random moving to selecting best move according to heuristics
             if winchecker.Check(turn) and turn == self.AIStoneType:
                 wins = 1
                 break
@@ -160,6 +170,7 @@ class MCTSActuator(AICore):
                 wins = -1
                 break
             turn = self.EnemyStoneType if turn == self.AIStoneType else self.AIStoneType
+        print("simulation result",wins)
         return wins
 
 
