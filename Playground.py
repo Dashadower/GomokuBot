@@ -5,17 +5,19 @@
     gameui = GomokuBoard(board, root)
     root.mainloop()"""
 if __name__ == "__main__":
-    from MonteCarloTest import MonteCarlo
+
     from AICore import ThreatSpaceSearch
     from main import GameBoard
     from Analyzer import WinChecker
     import time,tkinter,threading
-    from AlphaBeta import AlphaBeta
+    #from AlphaBeta import AlphaBeta
+    from AlphaBetaMultiProcess import AlphaBeta
     board = GameBoard(10,10)
 
 
     #ai = MonteCarlo(board,searchrange=2,TimeLimit=20)
-    ai = AlphaBeta(board,"white",2,1)
+    ai = AlphaBeta(board,"white",3,1,4)
+    ai.InitiateProcess()
     threatspace = ThreatSpaceSearch(board,"white")
     refree = WinChecker(board)
 
