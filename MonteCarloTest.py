@@ -162,6 +162,7 @@ class MCTSActuator(AICore):
             hvalues = sorted(hvalues, key=lambda x: x[1], reverse=True)
             final_choice = hvalues[0][0]
             print("Heuristics:",final_choice,turn,hvalues[0][1])
+            #final_choice = random.choice(super().GetOpenMovesPlus(board))
             board.AddStone(turn, final_choice) # change random moving to selecting best move according to heuristics
             if winchecker.Check(turn) and turn == self.AIStoneType:
                 wins = 1

@@ -6,18 +6,19 @@
     root.mainloop()"""
 if __name__ == "__main__":
     from MonteCarloTest import MonteCarlo
-
+    from AICore import ThreatSpaceSearch
     from main import GameBoard
     from Analyzer import WinChecker
     import time,tkinter,threading
-    #from AICore import AlphaBeta
+    from AlphaBeta import AlphaBeta
     board = GameBoard(10,10)
 
 
-    ai = MonteCarlo(board,searchrange=2,TimeLimit=20)
-    #ai = AlphaBeta(board,plydepth=5)
+    #ai = MonteCarlo(board,searchrange=2,TimeLimit=20)
+    ai = AlphaBeta(board,"white",2,1)
+    threatspace = ThreatSpaceSearch(board,"white")
     refree = WinChecker(board)
-    #threading.Thread(target=createui,args=(board,)).start()
+
     while True:
         print("Current Board white:", board.WhiteStones, "black:", board.BlackStones)
         x, y = input("Enter Human position with comma in between ex x,y:").split(",")
@@ -27,7 +28,11 @@ if __name__ == "__main__":
             print("Current Board white:", board.WhiteStones, "black:", board.BlackStones)
             break
         starttime = time.time()
-        ai.ChooseMove()
+        if not threatspace.Check():
+            ai.ChooseMove()
+        else:
+            ai.AddAIStone(threatspace.Check())
+            print("TSS!!!!")
         endtime = time.time()
 
         print("CALCULATION TIME", endtime - starttime, "SECONDS")

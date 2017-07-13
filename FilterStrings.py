@@ -3,6 +3,7 @@
 # o (alphabet o) means attacker's stone
 # - (dash) means empty space
 # x (alphabet x) means attacker's opponent's stone
+# w means wall(out of bounds)
 # each pattern must be 6 characters long
 # -----------------------------------------
 # (Reference)
@@ -15,7 +16,8 @@ Open2 = [
     "---oo-",
     "-o-o--",
     "--o-o-",
-    "--o-o-"
+    "--o-o-",
+    "w--oo-"
 ]
 Open2Val = 5
 # -----------------------------------------
@@ -26,25 +28,27 @@ Open3 = [
     "--ooo-",
     "-o-oo-",
     "-oo-o-",
-    "x-ooo-"
+    "x-ooo-",
+    "w-ooo-"
 ]
-Open3Val = 5000
+Open3Val = 40000
 # -----------------------------------------
 # Open4 is a threat in which all the ends of 4 repetitive stones are open
 # If the attacker does not have an Closed4 or Open4 to make into 5 immediately, Attacker is guarenteed to win next turn
 Open4 = [
     "-oooo-"
 ]
-Open4Val = 90000000
+Open4Val = 1000000
 # -----------------------------------------
 # Open5 is a win condition.
 Open5 = [
     "xooooo",
-    #"ooooox", # the algorithm will not count this as a 5 win , because it is not possible
+    "ooooox", # the algorithm will not count this as a 5 win , because it is not possible
     "-ooooo",
-    #"ooooo-", # same as above
+    "ooooo-", # same as above
+    "wooooo"
 ]
-Open5Val = 100000000
+Open5Val = 1000000000
 # -----------------------------------------
 # Closed4 is a threat in which one of the ends of 4 repetitive stones are open
 # If the defender does not block the other end, Attacker is guaranteed to win next turn.
@@ -52,5 +56,11 @@ Closed4 = [
     "xoooo-",
     "-oooox",
     "xoo-oo",
+    "woooo-",
+    "xo-ooo",
+    "xoo-oo",
+    "-o-ooo",
+    "-oo-oo",
+    "-ooo-o"
 ]
-Closed4Val = 5000
+Closed4Val = 50000

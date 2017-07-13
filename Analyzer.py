@@ -3,6 +3,7 @@ from FilterStrings import Open2, Open3, Open4, Open5, Closed4, Open2Val, Open3Va
 import time
 
 
+
 class Heuristics():
     def __init__(self,Board,aistonetype,debug=True):
         self.Board = Board
@@ -51,11 +52,11 @@ class Analyzer():
                             if g != 0:
                                 break    # This fixed the Problem!!!!! Push 9818399
                         elif y-1+g <= 0 or y-1+g > self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x,y-1+g) not in MyStones and (x,y-1+g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x,y+5) in MyStones:
 
                             checker_increment = 0
@@ -96,11 +97,11 @@ class Analyzer():
                             if g != 0:
                                 break    # This fixed the Problem!!!!! Push 9818399
                         elif x-1+g <=0 or x-1+g > self.Board.size[0]:
-                            data += "x"
+                            data += "w"
                         elif (x-1+g, y) not in MyStones and (x-1+g, y) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x+5,y) in MyStones:
 
                             checker_increment = 0
@@ -139,11 +140,11 @@ class Analyzer():
                             if g != 0:
                                 break
                         elif x-y-1+g <= 0 or x-y-1+g > self.Board.size[0] or y+1-1+g <= 0 or y+1-1+g > self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x-y-1+g,y+1-1+g) not in MyStones and (x-y-1+g,y+1-1+g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x-y+5,y+1+5) in MyStones:
                             checker_increment = 0
 
@@ -181,11 +182,11 @@ class Analyzer():
                             if g != 0:
                                 break
                         elif x-self.Board.size[1]+y-1+g <= 0 or x-self.Board.size[1]+y-1+g > self.Board.size[0] or y+1-g <= 0 or y+1-g > self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x-self.Board.size[1]+y-1+g,y+1-g) not in MyStones and (x-self.Board.size[1]+y-1+g,y+1-g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x-self.Board.size[1]+y+5,y-5) in MyStones:
                             checker_increment = 0
 
@@ -221,11 +222,11 @@ class Analyzer():
                             if g != 0:
                                 break
                         elif x-1+g <= 0 or x-1+g > self.Board.size[0] or x-y+1-g <= 0 or x-y+1-g > self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x-1+g,x-y+1-g) not in MyStones and (x-1+g,x-y+1-g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x+5,x-y+5) in MyStones:
                             checker_increment = 0
 
@@ -330,11 +331,11 @@ class AdvancedAnalyzer():
                             if g != 0:
                                 break  # This fixed the Problem!!!!! Push 9818399
                         elif y - 1 + g <= 0 or y - 1 + g > self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x, y - 1 + g) not in MyStones and (x, y - 1 + g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x, y + 5) in MyStones:
 
                             checker_increment = 0
@@ -375,11 +376,11 @@ class AdvancedAnalyzer():
                             if g != 0:
                                 break  # This fixed the Problem!!!!! Push 9818399
                         elif x - 1 + g <= 0 or x - 1 + g > self.Board.size[0]:
-                            data += "x"
+                            data += "w"
                         elif (x - 1 + g, y) not in MyStones and (x - 1 + g, y) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x + 5, y) in MyStones:
 
                             checker_increment = 0
@@ -420,12 +421,12 @@ class AdvancedAnalyzer():
                                 break
                         elif x - y - 1 + g <= 0 or x - y - 1 + g > self.Board.size[
                             0] or y + 1 - 1 + g <= 0 or y + 1 - 1 + g > self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x - y - 1 + g, y + 1 - 1 + g) not in MyStones and (
                                     x - y - 1 + g, y + 1 - 1 + g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x - y + 5, y + 1 + 5) in MyStones:
                             checker_increment = 0
 
@@ -467,12 +468,12 @@ class AdvancedAnalyzer():
                                 break
                         elif x - self.Board.size[1] + y - 1 + g <= 0 or x - self.Board.size[1] + y - 1 + g > \
                                 self.Board.size[0] or y + 1 - g <= 0 or y + 1 - g > self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x - self.Board.size[1] + y - 1 + g, y + 1 - g) not in MyStones and (
                                         x - self.Board.size[1] + y - 1 + g, y + 1 - g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x - self.Board.size[1] + y + 5, y - 5) in MyStones:
                             checker_increment = 0
 
@@ -513,12 +514,12 @@ class AdvancedAnalyzer():
                                 break
                         elif x - 1 + g <= 0 or x - 1 + g > self.Board.size[0] or x - y + 1 - g <= 0 or x - y + 1 - g > \
                                 self.Board.size[1]:
-                            data += "x"
+                            data += "w"
                         elif (x - 1 + g, x - y + 1 - g) not in MyStones and (
                                 x - 1 + g, x - y + 1 - g) not in EnemyStones:
                             data += "-"
 
-                    if data == "xooooo" or data == "-ooooo":
+                    if data == "xooooo" or data == "-ooooo" or data == "wooooo":
                         if (x + 5, x - y + 5) in MyStones:
                             checker_increment = 0
 
@@ -571,26 +572,20 @@ if __name__ == "__main__":
     starttime = time.time()
     board = GameBoard(13,13)
 
-    board.AddStone("black", (7, 6))
-    board.AddStone("black", (7, 7))
-    board.AddStone("black", (7, 8))
-    board.AddStone("black", (7, 9))
-    board.AddStone("white",(7,5))
-    """board.AddStone("black", (7, 10))
+
+    board.AddStone("black", (6, 6))
     board.AddStone("black", (6, 7))
     board.AddStone("black", (6, 8))
     board.AddStone("black", (6, 9))
     board.AddStone("black", (6, 10))
-    board.AddStone("black", (8, 7))
 
-    board.AddStone("black", (8, 8))
-    board.AddStone("black", (7, 11))
-    board.AddStone("white", (6, 6))"""
+
+
     #RandomPopulate(board)
     print("Black:", board.BlackStones)
     print("White:", board.WhiteStones)
     heuristics = AdvancedAnalyzer(board)
-
+    #heuristics = Analyzer(board,debug=True)
     print(heuristics.Parser("black"))
     endtime = time.time()
     print("Total calculation time:", endtime-starttime if not endtime-starttime == 0.0 else "0.0 (<0.0001 seconds)")
