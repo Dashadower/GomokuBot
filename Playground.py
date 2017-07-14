@@ -10,14 +10,16 @@ if __name__ == "__main__":
     from main import GameBoard
     from Analyzer import WinChecker
     import time,tkinter,threading
-    #from AlphaBeta import AlphaBeta
-    from AlphaBetaMultiProcess import AlphaBeta
+    from AlphaBeta import AlphaBeta
+    #from AlphaBetaMultiProcess import AlphaBeta
+    from NegaMax import NegaMax
+    #from HashTest import AlphaBeta
     board = GameBoard(10,10)
 
 
-    #ai = MonteCarlo(board,searchrange=2,TimeLimit=20)
-    ai = AlphaBeta(board,"white",3,1,4)
-    ai.InitiateProcess()
+    #ai = NegaMax(board,"white",3,1)
+    ai = AlphaBeta(board,"white",2,1)
+    #ai.InitiateProcess()
     threatspace = ThreatSpaceSearch(board,"white")
     refree = WinChecker(board)
 
@@ -32,8 +34,16 @@ if __name__ == "__main__":
         starttime = time.time()
         if not threatspace.Check():
             ai.ChooseMove()
+            while True:
+                data = ai.GetResult()
+                if not data:
+                    pass
+                else:
+                    ai.AddAIStone(data[1])
+                    break
         else:
-            ai.AddAIStone(threatspace.Check())
+            data = ai.AddAIStone(threatspace.Check())
+
             print("TSS!!!!")
         endtime = time.time()
 

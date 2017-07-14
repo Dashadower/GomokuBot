@@ -1,3 +1,5 @@
+
+
 class GameBoard():
     def __init__(self, size_x, size_y):
         self.size = (size_x, size_y)
@@ -17,6 +19,7 @@ class GameBoard():
             self.stones.append(Position)
             self.turn = "black"
         self.Moves += 1
+
 
 if __name__ == "__main__":
     pass

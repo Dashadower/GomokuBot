@@ -29,23 +29,24 @@ Open3 = [
     "-o-oo-",
     "-oo-o-",
     "x-ooo-",
-    "w-ooo-"
+    "w-ooo-",
+    "-ooo-x"
 ]
 Open3Val = 40000
 # -----------------------------------------
 # Open4 is a threat in which all the ends of 4 repetitive stones are open
 # If the attacker does not have an Closed4 or Open4 to make into 5 immediately, Attacker is guarenteed to win next turn
 Open4 = [
-    "-oooo-"
+    "-oooo-" # TSS OK
 ]
 Open4Val = 1000000
 # -----------------------------------------
 # Open5 is a win condition.
 Open5 = [
-    "xooooo",
+    "xooooo", # TSS OK
     "ooooox", # the algorithm will not count this as a 5 win , because it is not possible
-    "-ooooo",
-    "ooooo-", # same as above
+    "-ooooo", # TSS OK
+    "ooooo-", # TSS OK same as above
     "wooooo"
 ]
 Open5Val = 1000000000
@@ -53,14 +54,14 @@ Open5Val = 1000000000
 # Closed4 is a threat in which one of the ends of 4 repetitive stones are open
 # If the defender does not block the other end, Attacker is guaranteed to win next turn.
 Closed4 = [
-    "xoooo-",
-    "-oooox",
-    "xoo-oo",
-    "woooo-",
-    "xo-ooo",
-    "xoo-oo",
-    "-o-ooo",
-    "-oo-oo",
-    "-ooo-o"
+    "xoooo-", # TSS OK
+    "-oooox", # TSS OK
+    "xoo-oo", # TSS OK
+    "woooo-", # TSS OK
+    "xo-ooo", # TSS OK
+    "xoo-oo", # TSS OK
+    "-o-ooo", # TSS OK
+    "-oo-oo", # TSS OK
+    "-ooo-o"  # TSS OK
 ]
-Closed4Val = 50000
+Closed4Val = 100000

@@ -2,7 +2,7 @@ import tkinter
 
 
 class GomokuBoard(tkinter.Frame):
-    def __init__(self, GameBoard, master):
+    def __init__(self, GameBoard, master,GameManager):
         self.master = master
         tkinter.Frame.__init__(self, self.master)
         self.pack(expand=tkinter.YES, fill=tkinter.BOTH)
@@ -14,6 +14,8 @@ class GomokuBoard(tkinter.Frame):
         self.GameArea.pack(expand=tkinter.YES, fill=tkinter.BOTH)
         self.GameArea.bind("<Motion>", self.onMouseMove)
         self.GameArea.bind("<Button-1>", self.onMouseClick)
+        self.GameManager = GameManager
+        self.PlayerTurn = False
     def TranslateCoordinates(self,coord):
         """input : coord: tuple (x,y)
         output: translatedcoord : tuple (grid_x,grid_y)
@@ -58,12 +60,16 @@ class GomokuBoard(tkinter.Frame):
 
     def onMouseMove(self,event):
         x_grid_pos, y_grid_pos = self.TranslateCoordinates((event.x,event.y))
-        if x_grid_pos <= self.GameBoard.size[0] and x_grid_pos >= 1:
-            if y_grid_pos <= self.GameBoard.size[1] and y_grid_pos >= 1:
-                if (x_grid_pos,y_grid_pos) not in self.GameBoard.stones:
-                    self.clear()
-                    self.Draw()
-                    self.AddStoneShape(self.GameBoard.turn,(x_grid_pos,y_grid_pos))
+        if self.PlayerTurn:
+            if x_grid_pos <= self.GameBoard.size[0] and x_grid_pos >= 1:
+                if y_grid_pos <= self.GameBoard.size[1] and y_grid_pos >= 1:
+                    if (x_grid_pos,y_grid_pos) not in self.GameBoard.stones:
+                        self.clear()
+                        self.Draw()
+                        self.AddStoneShape(self.GameBoard.turn,(x_grid_pos,y_grid_pos))
+                    else:
+                        self.clear()
+                        self.Draw()
                 else:
                     self.clear()
                     self.Draw()
@@ -75,15 +81,21 @@ class GomokuBoard(tkinter.Frame):
             self.Draw()
     def onMouseClick(self,event):
         gridpos = self.TranslateCoordinates((event.x,event.y))
-        if gridpos not in self.GameBoard.stones and gridpos[0] <= self.GameBoard.size[0] and gridpos[0] >= 1 and gridpos[1] <= self.GameBoard.size[0] and gridpos[1] >= 1:
-            self.GameBoard.AddStone(self.GameBoard.turn,gridpos)
-            print(self.GameBoard.stones)
-        self.clear()
-        self.Draw()
+        if self.PlayerTurn:
+            if gridpos not in self.GameBoard.stones and gridpos[0] <= self.GameBoard.size[0] and gridpos[0] >= 1 and gridpos[1] <= self.GameBoard.size[0] and gridpos[1] >= 1:
+                self.GameBoard.AddStone(self.GameBoard.turn,gridpos)
+                self.GameManager.RegisterUserStone(gridpos)
+                print(self.GameBoard.stones)
+            self.clear()
+            self.Draw()
+    def lockscreen(self):
+        self.PlayerTurn = False
 if __name__ == "__main__":
     from main import GameBoard
     board = GameBoard(10,10)
     root = tkinter.Tk()
     boardui = GomokuBoard(board,root)
+
     boardui.Draw()
+
     root.mainloop()

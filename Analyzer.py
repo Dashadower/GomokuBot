@@ -553,7 +553,14 @@ class WinChecker(Analyzer):
 
 
 
-
+    def CheckBoth(self):
+        Patterns = super().Parser("black")
+        Patterns += super().Parser("black")
+        for pattern in Patterns:
+            if pattern in Open5:
+                return True
+            else:
+                return False
 
     def Check(self, StoneType):
         """Check if a 5x exists for StoneType in self.GameBoard. Pretty much a copy of Analyzer() :p"""
@@ -584,9 +591,11 @@ if __name__ == "__main__":
     #RandomPopulate(board)
     print("Black:", board.BlackStones)
     print("White:", board.WhiteStones)
-    heuristics = AdvancedAnalyzer(board)
+    heuristics = Analyzer(board)
     #heuristics = Analyzer(board,debug=True)
     print(heuristics.Parser("black"))
+    refree = WinChecker(board)
+    print(refree.CheckBoth())
     endtime = time.time()
     print("Total calculation time:", endtime-starttime if not endtime-starttime == 0.0 else "0.0 (<0.0001 seconds)")
     from GomokuBoardUI import GomokuBoard
