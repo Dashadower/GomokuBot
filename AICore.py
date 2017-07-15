@@ -155,28 +155,8 @@ class ThreatSpaceSearch():
                     elif pattern[0] == Closed4[8]:
                         return (pattern[1][0]+3,pattern[1][1]-3)
         for pattern in current_enemy_threats:
-            if pattern[0] in Open4:
-                if pattern[2] == "vert":
-                    if (pattern[1][0],pattern[1][1]-1) not in self.board.stones:
-                        return (pattern[1][0],pattern[1][1]-1)
-                    else:
-                        return (pattern[1][0], pattern[1][1]+4)
-                elif pattern[2] == "hori":
-                    if (pattern[1][0]-1, pattern[1][1]) not in self.board.stones:
-                        return (pattern[1][0]-1, pattern[1][1])
-                    else:
-                        return (pattern[1][0]+4, pattern[1][1])
-                elif pattern[2] == "diag2":
-                    if(pattern[1][0] - 1, pattern[1][1]-1) not in self.board.stones:
-                        return (pattern[1][0] - 1, pattern[1][1]-1)
-                    else:
-                        return (pattern[1][0] + 4, pattern[1][1]+4)
-                elif pattern[2] == "diag5":
-                    if(pattern[1][0] - 1, pattern[1][1]+1) not in self.board.stones:
-                        return (pattern[1][0] - 1, pattern[1][1]+1)
-                    else:
-                        return (pattern[1][0] + 4, pattern[1][1]-4)
-            elif pattern[0] in Closed4:
+
+            if pattern[0] in Closed4:
                 if pattern[2] == "vert":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0],pattern[1][1]+4)

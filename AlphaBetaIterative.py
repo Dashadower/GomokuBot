@@ -88,11 +88,16 @@ class AlphaBetaActuator():
                     self.aiutils = AICore(data[1],self.AIStoneType,self.OpenSearchRange)
                     datas = []
                     self.RandomMatrix = random_matrix(data[1])
-                    for moves in self.aiutils.GetOpenMovesPlus(data[1],self.OpenSearchRange):
-                        self.HashTable = []
+                    openmoves = self.aiutils.GetOpenMovesPlus(data[1],self.OpenSearchRange)
+                    for moves in openmoves:
+                        if len(openmoves) >= 30:
+                            print("ZOBRIST MODE")
+                            self.HashTable = []
 
-                        for x in range(1,self.PlyDepth+1):
-                            result = self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(self.aiutils.DuplicateBoard(data[1]),moves,self.AIStoneType),moves,x,False,-10000000,10000000,self.OpenSearchRange)
+                            for x in range(1,self.PlyDepth+1):
+                                result = self.HashedAlphaBeta(self.aiutils.GenerateCustomGameBoard(self.aiutils.DuplicateBoard(data[1]),moves,self.AIStoneType),moves,x,False,-10000000,10000000,self.OpenSearchRange)
+                        else:
+                            result = self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(self.aiutils.DuplicateBoard(data[1]),moves,self.AIStoneType),moves,self.PlyDepth,False,-10000000,10000000,self.OpenSearchRange)
                         datas.append((result[0],moves))
                     current = (-20000000000,("flibbergibbit","datasover1"))
                     print(datas)
@@ -109,6 +114,31 @@ class AlphaBetaActuator():
                     break
 
     def AlphaBeta(self,board,move,depth,isMaximizingPlayer,alpha,beta,tilesearchrange):
+        #print("CURRENT POSITION",move,isMaximizingPlayer)
+        if WinChecker(board).CheckBoth() or depth == 0:
+
+            return (Analyzer(board).Grader(self.AIStoneType)-Analyzer(board).Grader(self.EnemyStoneType),move)
+
+        if isMaximizingPlayer:
+            v = -10000000
+            for moves in self.aiutils.GetOpenMovesPlus(board,self.OpenSearchRange):
+                v = max(v,self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(board,moves,self.AIStoneType),moves,depth-1,False, alpha,beta,tilesearchrange)[0])
+                alpha = max(alpha,v)
+                if beta <= alpha:
+                    #print("BETA CUTOFF")
+                    break
+            return (v,move)
+        else:
+            v = 10000000
+            for moves in self.aiutils.GetOpenMovesPlus(board,self.OpenSearchRange):
+                v = min(v,self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(board,moves,self.EnemyStoneType),moves,depth-1,True,alpha,beta,tilesearchrange)[0])
+                beta = min(beta,v)
+                if beta <= alpha:
+                    #print("ALPHA CUTOFF")
+                    break
+            return (v,move)
+
+    def HashedAlphaBeta(self,board,move,depth,isMaximizingPlayer,alpha,beta,tilesearchrange):
         #print("CURRENT POSITION",move,isMaximizingPlayer)
         if WinChecker(board).CheckBoth() or depth == 0:
             found = False

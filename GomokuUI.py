@@ -2,7 +2,7 @@ import tkinter
 from GomokuBoardUI import GomokuBoard
 from main import GameBoard
 from tkinter.ttk import Progressbar
-import AICore,GameManager, multiprocessing, AlphaBeta
+import AICore,GameManager, multiprocessing, AlphaBeta, AlphaBetaIterative
 class MainScreen(tkinter.Frame):
     def __init__(self,master,gameboard,gridsize,buffer):
         tkinter.Frame.__init__(self,master)
@@ -24,7 +24,7 @@ class MainScreen(tkinter.Frame):
         self.InfoBox.config(yscrollcommand=self.scrollbar.set)
         self.scrollbar.config(command=self.InfoBox.yview)
         self.InfoBox.insert(tkinter.END,"고모쿠봇 ^^\n")
-        #self.InfoBox.config(state=tkinter.DISABLED)
+        self.InfoBox.config(state=tkinter.DISABLED)
         self.progressbar = Progressbar(self.SideBackground,mode="indeterminate")
         self.progressbar.pack(side=tkinter.BOTTOM,fill=tkinter.X)
 
@@ -37,7 +37,17 @@ def OnNewGame():
     clearscreen()
     gboard = GameBoard(BOARDSIZE_X, BOARDSIZE_Y)
     screen = MainScreen(root,gboard,GRIDSIZE,BUFFER)
-    mgr = GameManager.GameManager(root,AlphaBeta.AlphaBeta(gboard,"white",DIFFICULTY,SEARCHRANGE),AICore.ThreatSpaceSearch(gboard,"white"),screen.GomokuBoard,screen.InfoBox,screen.progressbar)
+    if MODE == "VANILLA":
+        ai = AlphaBeta.AlphaBeta(gboard,"white",DIFFICULTY,SEARCHRANGE)
+        screen.InfoBox.config(state=tkinter.NORMAL)
+        screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBeta): 심층 깊이 사용하지 않음, Zobrist 해쉬 사용하지 않음, 트랜스포지션 테이블 사용하지 않음\n")
+        screen.InfoBox.config(state=tkinter.DISABLED)
+    elif MODE == "HASHED":
+        ai = AlphaBetaIterative.AlphaBeta(gboard, "white", DIFFICULTY, SEARCHRANGE)
+        screen.InfoBox.config(state=tkinter.NORMAL)
+        screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBetaIterative): 심층 깊이 사용, Zobrist 해쉬 사용, 트랜스포지션 테이블 사용\n")
+        screen.InfoBox.config(state=tkinter.DISABLED)
+    mgr = GameManager.GameManager(root,ai,AICore.ThreatSpaceSearch(gboard,"white"),screen.GomokuBoard,screen.InfoBox,screen.progressbar)
     screen.GomokuBoard.GameManager = mgr
     mgr.start()
 if __name__ == "__main__":

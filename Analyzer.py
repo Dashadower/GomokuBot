@@ -33,8 +33,6 @@ class Analyzer():
         MyStones = self.Board.BlackStones if StoneType == "black" else self.Board.WhiteStones
         EnemyStones = self.Board.WhiteStones if StoneType == "black" else self.Board.BlackStones
 
-
-
         # Check Vertical repetitions
         for stone in sorted(MyStones,key=lambda x:x[1]):
             x,y = stone
@@ -504,7 +502,8 @@ if __name__ == "__main__":
     board.AddStone("black", (6, 7))
     board.AddStone("black", (6, 8))
     board.AddStone("black", (6, 9))
-    board.AddStone("black", (6, 10))
+    board.AddStone("black", (7, 7))
+    board.AddStone("black", (8, 8))
 
 
 
@@ -520,9 +519,9 @@ if __name__ == "__main__":
     endtime = time.time()
     print("Total calculation time:", endtime-starttime if not endtime-starttime == 0.0 else "0.0 (<0.0001 seconds)")
     print(starttime,endtime)
-    """from GomokuBoardUI import GomokuBoard
+    from GomokuBoardUI import GomokuBoard
     from tkinter import Tk
     root = Tk()
     UIboard = GomokuBoard(board, root,None)
     UIboard.Draw()
-    root.mainloop()"""
+    root.mainloop()

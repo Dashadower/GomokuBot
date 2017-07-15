@@ -39,7 +39,7 @@ Open3Val = 40000
 Open4 = [
     "-oooo-" # TSS OK
 ]
-Open4Val = 1000000
+Open4Val = 10000000
 # -----------------------------------------
 # Open5 is a win condition.
 Open5 = [
