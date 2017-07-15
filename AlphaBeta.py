@@ -9,8 +9,9 @@ class AlphaBeta(AICore):
         self.EnemyStoneType = "black" if self.AIStoneType == "white" else "white"
         self.PlyDepth = plydepth
         self.ControlQueue = multiprocessing.Queue()
+        self.ResultQueue = multiprocessing.Queue()
         self.OpenSearchRange = tilesearchrange
-        self.process = multiprocessing.Process(target=AlphaBetaActuator,args=(self.ControlQueue,self.AIStoneType,self.PlyDepth,self.OpenSearchRange))
+        self.process = multiprocessing.Process(target=AlphaBetaActuator,args=(self.ControlQueue,self.ResultQueue,self.AIStoneType,self.PlyDepth,self.OpenSearchRange))
         self.process.daemon = True
         self.process.start()
     def ChooseMove(self):
@@ -28,24 +29,24 @@ class AlphaBeta(AICore):
     def GetResult(self):
         try:
 
-            data = self.ControlQueue.get_nowait()
+            data = self.ResultQueue.get_nowait()
             print(data)
         except:
             return False
         else:
-            if data[0] == "START":
-                self.ControlQueue.put(data)
-            else:
-                print("GOT DATA", data)
-                print("FINALIZED DATA", data)
-                #self.AddAIStone(data[1])
-                return data
+
+
+            print("GOT DATA", data)
+            print("FINALIZED DATA", data)
+            #self.AddAIStone(data[1])
+            return data
 
 class AlphaBetaActuator():
-    def __init__(self,ControlQueue,aistonetype,depth,tilesearchrange):
+    def __init__(self,ControlQueue,ResultQueue,aistonetype,depth,tilesearchrange):
         self.AIStoneType = aistonetype
         self.EnemyStoneType = "black" if self.AIStoneType == "white" else "white"
         self.ControlQueue = ControlQueue
+        self.ResultQueue = ResultQueue
         self.PlyDepth = depth
         self.OpenSearchRange = tilesearchrange
         self.CheckForWork()
@@ -58,21 +59,18 @@ class AlphaBetaActuator():
                     self.aiutils = AICore(data[1],self.AIStoneType,self.OpenSearchRange)
                     datas = []
                     for moves in self.aiutils.GetOpenMovesPlus(data[1],self.OpenSearchRange):
-                        print("NEW GAME BROS!!")
+                        #print("NEW GAME BROS!!")
                         result = self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(self.aiutils.DuplicateBoard(data[1]),moves,self.AIStoneType),moves,self.PlyDepth,False,-10000000,10000000,self.OpenSearchRange)
                         datas.append((result[0],moves))
-                    current = (-20000000000,None)
+                    current = (-20000000000,("flibbergibbit","datasover1"))
                     print(datas)
                     for items in datas:
                         if int(items[0]) > current[0]:
                             current = items
 
-                    self.ControlQueue.put(current)
-                    try:
-                        self.ControlQueue.task_done()
-                    except:
-                        pass
-                    print("SENT DATA", current)
+                    self.ResultQueue.put(current)
+
+                    print("SENT DATA", current,self.ResultQueue.empty())
 
 
                 elif data == "EXIT":

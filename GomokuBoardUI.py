@@ -2,20 +2,22 @@ import tkinter
 
 
 class GomokuBoard(tkinter.Frame):
-    def __init__(self, GameBoard, master,GameManager):
+    def __init__(self, GameBoard, master,GameManager,gridsize=50,buffer=100):
         self.master = master
         tkinter.Frame.__init__(self, self.master)
         self.pack(expand=tkinter.YES, fill=tkinter.BOTH)
         self.GameBoard = GameBoard
-        self.gridsize = 50
+
+        self.gridsize = gridsize # in settings.config
         self.stonesize = self.gridsize / 2
-        self.buffer = 100
+        self.buffer = buffer # in settings.config
         self.GameArea = tkinter.Canvas(self, bg="green")
         self.GameArea.pack(expand=tkinter.YES, fill=tkinter.BOTH)
         self.GameArea.bind("<Motion>", self.onMouseMove)
         self.GameArea.bind("<Button-1>", self.onMouseClick)
         self.GameManager = GameManager
         self.PlayerTurn = False
+        self.Draw()
     def TranslateCoordinates(self,coord):
         """input : coord: tuple (x,y)
         output: translatedcoord : tuple (grid_x,grid_y)
@@ -92,7 +94,7 @@ class GomokuBoard(tkinter.Frame):
         self.PlayerTurn = False
 if __name__ == "__main__":
     from main import GameBoard
-    board = GameBoard(10,10)
+    board = GameBoard(10,10,50,100)
     root = tkinter.Tk()
     boardui = GomokuBoard(board,root)
 
