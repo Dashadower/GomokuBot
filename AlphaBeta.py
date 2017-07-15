@@ -1,6 +1,7 @@
 from AICore import AICore
 from main import GameBoard
-from Analyzer import Analyzer,WinChecker
+from Analyzer import WinChecker, Analyzer
+#from AnalyzerOptimized import Analyzer
 import time, random, multiprocessing
 
 class AlphaBeta(AICore):

@@ -47,7 +47,7 @@ class GameManager():
         if not self.TSS.Check():
             self.AI.ChooseMove()
             self.Writetotext("START command added to q")
-            self.MainUI.after(2000,self.waitforinput)
+            self.MainUI.after(1000,self.waitforinput)
         else:
             self.progressbar.stop()
             self.Writetotext("ThreatSpaceSearch"+str(self.TSS.Check()))

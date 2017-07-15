@@ -94,9 +94,9 @@ class GomokuBoard(tkinter.Frame):
         self.PlayerTurn = False
 if __name__ == "__main__":
     from main import GameBoard
-    board = GameBoard(10,10,50,100)
+    board = GameBoard(10,10)
     root = tkinter.Tk()
-    boardui = GomokuBoard(board,root)
+    boardui = GomokuBoard(board,root,None)
 
     boardui.Draw()
 

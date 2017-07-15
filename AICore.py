@@ -17,25 +17,16 @@ class AICore():
 
     def GenerateCustomGameBoard(self, GameState, Position, StoneType):
         """Generates a custom GameBoard class, merging the previous GameState GameBoard and a new stone type StoneType on position Position"""
-        """Stones = {}
-        BlackStones = [x for x in GameState.BlackStones]
-        WhiteStones = [x for x in GameState.WhiteStones]
-        Stones["black"] = BlackStones
-        Stones["white"] = WhiteStones
-        Stones[StoneType].append(Position)
         board = GameBoard(GameState.size[0], GameState.size[1])
-        for stone in Stones["black"]:
+        for stone in GameState.BlackStones:
             board.AddStone("black",stone)
-        for stone in Stones["white"]:
+        for stone in GameState.WhiteStones:
             board.AddStone("white",stone)
-        if len(board.BlackStones) > len(board.WhiteStones):
-            board.turn = "white"
-        else:
-            board.turn = "black"
-            """
-        board = deepcopy(GameState)
         board.AddStone(StoneType,Position)
-        return board
+        return board # standard iteration is proved to be faster
+        """board = deepcopy(GameState) 
+        board.AddStone(StoneType,Position)
+        return board"""
 
     def DuplicateBoard(self, Board):
         g = GameBoard(Board.size[0], Board.size[1])
@@ -45,7 +36,7 @@ class AICore():
         for y in Board.BlackStones:
             g.AddStone("black", y)
         return g
-
+        # return deepcopy(Board) # standard iteration is proven to be faster
 
     def GetOpenMovesPlus(self,board,searchrange):
         """Returns available unoccupied positions  within a square of the outermost stones + range
@@ -122,39 +113,47 @@ class ThreatSpaceSearch():
                 if pattern[2] == "vert":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0],pattern[1][1]+4)
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0],pattern[1][1]-1)
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0],pattern[1][1]+2)
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0],pattern[1][1]+1)
+                    elif pattern[0] == Closed4[8]:
+                        return ((pattern[1][0],pattern[1][1]+3))
                 elif pattern[2] == "hori":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0]+4,pattern[1][1])
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0]-1,pattern[1][1])
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0]+2,pattern[1][1])
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0]+1,pattern[1][1])
+                    elif pattern[0] == Closed4[8]:
+                        return (pattern[1][0]+3, pattern[1][1])
                 elif pattern[2] == "diag2":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0]+4,pattern[1][1]+4)
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0]-1,pattern[1][1]-1)
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0]+2,pattern[1][1]+2)
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0]+1,pattern[1][1]+1)
+                    elif pattern[0] == Closed4[8]:
+                        return (pattern[1][0]+3,pattern[1][1]+3)
                 elif pattern[2] == "diag5":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0]+4,pattern[1][1]-4)
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0]-1,pattern[1][1]+1)
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0]+2,pattern[1][1]-2)
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0]+1,pattern[1][1]-1)
+                    elif pattern[0] == Closed4[8]:
+                        return (pattern[1][0]+3,pattern[1][1]-3)
         for pattern in current_enemy_threats:
             if pattern[0] in Open4:
                 if pattern[2] == "vert":
@@ -181,39 +180,47 @@ class ThreatSpaceSearch():
                 if pattern[2] == "vert":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0],pattern[1][1]+4)
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0],pattern[1][1]-1)
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0],pattern[1][1]+2)
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0],pattern[1][1]+1)
+                    elif pattern[0] == Closed4[8]:
+                        return ((pattern[1][0],pattern[1][1]+3))
                 elif pattern[2] == "hori":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0]+4,pattern[1][1])
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0]-1,pattern[1][1])
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0]+2,pattern[1][1])
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0]+1,pattern[1][1])
+                    elif pattern[0] == Closed4[8]:
+                        return (pattern[1][0]+3, pattern[1][1])
                 elif pattern[2] == "diag2":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0]+4,pattern[1][1]+4)
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0]-1,pattern[1][1]-1)
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0]+2,pattern[1][1]+2)
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0]+1,pattern[1][1]+1)
+                    elif pattern[0] == Closed4[8]:
+                        return (pattern[1][0]+3,pattern[1][1]+3)
                 elif pattern[2] == "diag5":
                     if pattern[0] == Closed4[0] or pattern[0] == Closed4[3]:
                         return (pattern[1][0]+4,pattern[1][1]-4)
-                    elif pattern[0] == Closed4[1] or pattern[0] == Closed4[6] or pattern[0] == Closed4[7] or pattern[0] == Closed4[8]:
+                    elif pattern[0] == Closed4[1]:
                         return (pattern[1][0]-1,pattern[1][1]+1)
-                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5]:
+                    elif pattern[0] == Closed4[2] or pattern[0] == Closed4[5] or pattern[0] == Closed4[7]:
                         return (pattern[1][0]+2,pattern[1][1]-2)
                     elif pattern[0] == Closed4[4] or pattern[0] == Closed4[6]:
                         return (pattern[1][0]+1,pattern[1][1]-1)
+                    elif pattern[0] == Closed4[8]:
+                        return (pattern[1][0]+3,pattern[1][1]-3)
 
 
 if __name__ == "__main__":

@@ -2,7 +2,7 @@ import tkinter
 from GomokuBoardUI import GomokuBoard
 from main import GameBoard
 from tkinter.ttk import Progressbar
-import AlphaBeta,AICore,GameManager, multiprocessing
+import AICore,GameManager, multiprocessing, AlphaBeta
 class MainScreen(tkinter.Frame):
     def __init__(self,master,gameboard,gridsize,buffer):
         tkinter.Frame.__init__(self,master)
@@ -37,7 +37,6 @@ def OnNewGame():
     clearscreen()
     gboard = GameBoard(BOARDSIZE_X, BOARDSIZE_Y)
     screen = MainScreen(root,gboard,GRIDSIZE,BUFFER)
-
     mgr = GameManager.GameManager(root,AlphaBeta.AlphaBeta(gboard,"white",DIFFICULTY,SEARCHRANGE),AICore.ThreatSpaceSearch(gboard,"white"),screen.GomokuBoard,screen.InfoBox,screen.progressbar)
     screen.GomokuBoard.GameManager = mgr
     mgr.start()
