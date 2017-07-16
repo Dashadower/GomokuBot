@@ -1,12 +1,12 @@
 import Analyzer
-import tkinter,time
+import tkinter,time,os,signal,sys
 import tkinter.messagebox
 class GameManager():
-    def __init__(self,mainui,AIObject,TSS,gboard,textfield,progressbar):
+    def __init__(self,mainui,AIObject,TSS,gboard,textfield,progressbar,pids):
         self.MainUI = mainui
         self.TextField = textfield
         self.progressbar = progressbar
-
+        self.pids = pids
         self.GomokuBoard = gboard
         self.AI = AIObject
         self.AIStoneType = self.AI.AIStoneType
@@ -18,6 +18,13 @@ class GameManager():
         tkinter.messagebox.showinfo("", "플레이어의 차례입니다")
         self.GomokuBoard.PlayerTurn = True
         self.StartTime = time.time()
+    def End(self):
+        if self.pids:
+            for pid in self.pids:
+                os.kill(pid,signal.SIGTERM)
+            sys.exit()
+        else:
+            sys.exit()
     def CheckWin(self):
         if self.refree.Check(self.AIStoneType):
             tkinter.messagebox.showinfo("","컴퓨터의 승리입니다")

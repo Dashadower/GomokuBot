@@ -16,6 +16,7 @@ class AlphaBeta(AICore):
         self.Processes = []
         self.CommQueues = []
         self.datalist = []
+        self.PIDs = []
     def InitiateProcess(self):
         for x in range(0,self.ProcessLimit):
             q = multiprocessing.Queue()
@@ -25,8 +26,9 @@ class AlphaBeta(AICore):
             p.daemon = True
             self.Processes.append(p)
             p.start()
+            self.PIDs.append(p.pid)
 
-        return self.Processes
+        return (self.Processes,self.PIDs)
     def ChooseMove(self):
         moves = self.GetOpenMovesPlus(self.Board, self.OpenSearchRange)
         startedprocesses = len(moves)
