@@ -69,8 +69,8 @@ class GameManager():
             self.progressbar.stop()
             self.Writetotext("평가함수 결과(Grader()):"+str(data[0])+" 위치:"+str(data[1]))
             self.AI.AddAIStone(data[1])
-            if data[0] >= 10000000:
-                self.Writetotext("WR 100")
+            if data[0] >= 9000000:
+                self.Writetotext("인공지능의 필승입니다 ^^")
             self.Writetotext("계산시간(입출력 시간 포함):" + str(time.time() - self.CalcTime))
             self.GomokuBoard.clear()
             self.GomokuBoard.Draw()
