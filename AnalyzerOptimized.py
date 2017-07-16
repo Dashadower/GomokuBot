@@ -199,26 +199,29 @@ class Analyzer():
 if __name__ == "__main__":
     from main import GameBoard
     import time
-    board = GameBoard(13,13)
+    board = GameBoard(13, 13)
 
+    blackstones = [(3, 4), (4, 3)]
 
-    board.AddStone("black", (6, 6))
-    board.AddStone("black", (6, 7))
-    board.AddStone("black", (6, 8))
-    board.AddStone("black", (6, 9))
-    board.AddStone("black", (6, 10))
+    for x in blackstones:
+        board.AddStone("black", x)
 
-
-
-    #RandomPopulate(board)
+    # RandomPopulate(board)
     print("Black:", board.BlackStones)
     print("White:", board.WhiteStones)
     heuristics = Analyzer(board)
-    #heuristics = Analyzer(board,debug=True)
+    # heuristics = Analyzer(board,debug=True)
     starttime = time.time()
     print(heuristics.Grader("black"))
-    #refree = WinChecker(board)
-    #print(refree.CheckBoth())
+    # refree = WinChecker(board)
+    # print(refree.CheckBoth())
     endtime = time.time()
-    print("Total calculation time:", endtime-starttime if not endtime-starttime == 0.0 else "0.0 (<0.0001 seconds)")
-    print(starttime,endtime)
+    print("Total calculation time:", endtime - starttime if not endtime - starttime == 0.0 else "0.0 (<0.0001 seconds)")
+    print(starttime, endtime)
+    from GomokuBoardUI import GomokuBoard
+    from tkinter import Tk
+
+    root = Tk()
+    UIboard = GomokuBoard(board, root, None)
+    UIboard.Draw()
+    root.mainloop()

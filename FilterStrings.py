@@ -16,8 +16,13 @@ Open2 = [
     "---oo-",
     "-o-o--",
     "--o-o-",
-    "--o-o-",
-    "w--oo-"
+    "-oo--w",
+    "--oo-w",
+    "-o-o-w",
+    "w--oo-",
+    "w-oo--",
+    "w-o-o-"
+
 ]
 Open2Val = 5
 # -----------------------------------------
@@ -30,7 +35,9 @@ Open3 = [
     "-oo-o-",
     "x-ooo-",
     "w-ooo-",
-    "-ooo-x"
+    "-ooo-x",
+    "-ooo-w",
+    "w-ooo-",
 ]
 Open3Val = 40000
 # -----------------------------------------
@@ -62,6 +69,10 @@ Closed4 = [
     "xoo-oo", # TSS OK
     "-o-ooo", # TSS OK
     "-oo-oo", # TSS OK
-    "-ooo-o"  # TSS OK
+    "-ooo-o" # TSS OK
+    "xooo-o",
+    "wo-ooo",
+    "woo-oo",
+    "wooo-o"
 ]
-Closed4Val = 100000
+Closed4Val = 40000

@@ -46,8 +46,7 @@ class GameManager():
         self.CalcTime = time.time()
         if not self.TSS.Check():
             self.AI.ChooseMove()
-            self.Writetotext("START command added to q")
-            self.MainUI.after(1000,self.waitforinput)
+            self.MainUI.after(200,self.waitforinput)
         else:
             self.progressbar.stop()
             self.Writetotext("ThreatSpaceSearch"+str(self.TSS.Check()))
@@ -63,7 +62,7 @@ class GameManager():
         data = self.AI.GetResult()
 
         if data == False:
-            self.MainUI.after(500,self.waitforinput)
+            self.MainUI.after(200,self.waitforinput)
             #self.Writetotext(str(data)+str(self.AI.ControlQueue.empty()))
         else:
             self.Writetotext("AI Move Recieved")
@@ -81,6 +80,6 @@ class GameManager():
                 self.GomokuBoard.PlayerTurn = True
     def Writetotext(self,text):
         self.TextField.config(state="normal")
-        self.TextField.insert("end",text+"\n")
+        self.TextField.insert("end",str(text)+"\n")
         self.TextField.see("end")
         self.TextField.config(state="disabled")

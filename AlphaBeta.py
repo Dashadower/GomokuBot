@@ -12,6 +12,7 @@ class AlphaBeta(AICore):
         self.ControlQueue = multiprocessing.Queue()
         self.ResultQueue = multiprocessing.Queue()
         self.OpenSearchRange = tilesearchrange
+        self.ReportHook = print
         self.process = multiprocessing.Process(target=AlphaBetaActuator,args=(self.ControlQueue,self.ResultQueue,self.AIStoneType,self.PlyDepth,self.OpenSearchRange))
         self.process.daemon = True
         self.process.start()
@@ -31,14 +32,12 @@ class AlphaBeta(AICore):
         try:
 
             data = self.ResultQueue.get_nowait()
-            print(data)
         except:
             return False
         else:
 
 
-            print("GOT DATA", data)
-            print("FINALIZED DATA", data)
+            self.ReportHook("GOT DATA "+str(data))
             #self.AddAIStone(data[1])
             return data
 
@@ -64,7 +63,6 @@ class AlphaBetaActuator():
                         result = self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(self.aiutils.DuplicateBoard(data[1]),moves,self.AIStoneType),moves,self.PlyDepth,False,-10000000,10000000,self.OpenSearchRange)
                         datas.append((result[0],moves))
                     current = (-20000000000,("flibbergibbit","datasover1"))
-                    print(datas)
                     for items in datas:
                         if int(items[0]) > current[0]:
                             current = items

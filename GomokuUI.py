@@ -2,7 +2,7 @@ import tkinter
 from GomokuBoardUI import GomokuBoard
 from main import GameBoard
 from tkinter.ttk import Progressbar
-import AICore,GameManager, multiprocessing, AlphaBeta, AlphaBetaIterative
+import AICore,GameManager, multiprocessing, AlphaBetaMultiProcess,AlphaBeta
 class MainScreen(tkinter.Frame):
     def __init__(self,master,gameboard,gridsize,buffer):
         tkinter.Frame.__init__(self,master)
@@ -37,17 +37,25 @@ def OnNewGame():
     clearscreen()
     gboard = GameBoard(BOARDSIZE_X, BOARDSIZE_Y)
     screen = MainScreen(root,gboard,GRIDSIZE,BUFFER)
-    if MODE == "VANILLA":
+    if MODE == "SINGLE":
+        print("SINGLE")
         ai = AlphaBeta.AlphaBeta(gboard,"white",DIFFICULTY,SEARCHRANGE)
         screen.InfoBox.config(state=tkinter.NORMAL)
-        screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBeta): 심층 깊이 사용하지 않음, Zobrist 해쉬 사용하지 않음, 트랜스포지션 테이블 사용하지 않음\n")
+        screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBeta): 프로세스 1개 사영\n")
         screen.InfoBox.config(state=tkinter.DISABLED)
-    elif MODE == "HASHED":
-        ai = AlphaBetaIterative.AlphaBeta(gboard, "white", DIFFICULTY, SEARCHRANGE)
+    elif MODE == "MULTIPROCESS":
+        print("MULTIPROCESS")
         screen.InfoBox.config(state=tkinter.NORMAL)
-        screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBetaIterative): 심층 깊이 사용, Zobrist 해쉬 사용, 트랜스포지션 테이블 사용\n")
+        screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBetaMultiProcess): 다중 프로세스 사용(프로세스 %d개), 전환 범위: %d수\n"%(MAXPROCESSES,MULTIPROCESS_CUTOFF))
         screen.InfoBox.config(state=tkinter.DISABLED)
+        ai = AlphaBetaMultiProcess.AlphaBeta(gboard, "white", DIFFICULTY, SEARCHRANGE,MAXPROCESSES,MULTIPROCESS_CUTOFF)
+        processes = ai.InitiateProcess()
+        screen.InfoBox.config(state=tkinter.NORMAL)
+        screen.InfoBox.insert(tkinter.END, "%s\n"%(processes))
+        screen.InfoBox.config(state=tkinter.DISABLED)
+        
     mgr = GameManager.GameManager(root,ai,AICore.ThreatSpaceSearch(gboard,"white"),screen.GomokuBoard,screen.InfoBox,screen.progressbar)
+    ai.ReportHook = mgr.Writetotext
     screen.GomokuBoard.GameManager = mgr
     mgr.start()
 if __name__ == "__main__":
