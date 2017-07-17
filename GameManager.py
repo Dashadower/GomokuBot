@@ -14,7 +14,7 @@ class GameManager():
         self.refree = Analyzer.WinChecker(self.AI.Board)
         self.TSS = TSS
     def start(self):
-        self.Writetotext("검색 깊이: "+str(self.AI.PlyDepth)+"(1)수(PLY) 검색 범위: "+str(self.AI.OpenSearchRange)+"칸(TILE)")
+        self.Writetotext("검색 깊이: "+str(self.AI.PlyDepth)+" + 1수(PLY) 검색 범위: "+str(self.AI.OpenSearchRange)+"칸(TILE)")
         tkinter.messagebox.showinfo("", "플레이어의 차례입니다")
         self.GomokuBoard.PlayerTurn = True
         self.StartTime = time.time()
@@ -25,6 +25,10 @@ class GameManager():
             sys.exit()
         else:
             sys.exit()
+    def _EndProcess(self):
+        if self.pids:
+            for pid in self.pids:
+                os.kill(pid,signal.SIGTERM)
     def CheckWin(self):
         if self.refree.Check(self.AIStoneType):
             tkinter.messagebox.showinfo("","컴퓨터의 승리입니다")
@@ -76,7 +80,8 @@ class GameManager():
             self.progressbar.stop()
             self.Writetotext("평가함수 결과(Grader()):"+str(data[0])+" 위치:"+str(data[1]))
             self.AI.AddAIStone(data[1])
-            if data[0] >= 900000000:
+            if data[0] >= 9900000:
+
                 self.Writetotext("인공지능의 필승입니다 ^^")
             self.Writetotext("계산시간(입출력 시간 포함):" + str(time.time() - self.CalcTime))
             self.GomokuBoard.clear()
