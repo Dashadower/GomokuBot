@@ -42,6 +42,11 @@ class GameManager():
             self.Writetotext("USER WIN")
             self.Writetotext("총 게임시간(입출력 시간 포함):" + str(time.time() - self.StartTime))
             return True
+        elif not self.AI.GetOpenMovesPlus(self.AI.Board,self.AI.OpenSearchRange):
+            tkinter.messagebox.showinfo("", "무승부 입니다")
+            self.GomokuBoard.PlayerTurn = False
+            self.Writetotext("DRAW")
+            self.Writetotext("총 게임시간(입출력 시간 포함):" + str(time.time() - self.StartTime))
         else:
             return False
     def RegisterUserStone(self,coords):

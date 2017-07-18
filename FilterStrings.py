@@ -75,4 +75,4 @@ Closed4 = [
     "woo-oo",
     "wooo-o"
 ]
-Closed4Val = 40000
+Closed4Val = 50000
