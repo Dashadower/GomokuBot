@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import tkinter
 from GomokuBoardUI import GomokuBoard
 from main import GameBoard
