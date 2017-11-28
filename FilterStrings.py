@@ -42,7 +42,7 @@ Open3 = [
 Open3Val = 40000
 # -----------------------------------------
 # Open4 is a threat in which all the ends of 4 repetitive stones are open
-# If the attacker does not have an Closed4 or Open4 to make into 5 immediately, Attacker is guarenteed to win next turn
+# If the attacker does not have an Closed4 or Open4 to make into 5 immediately, Attacker is guaranteed to win next turn
 Open4 = [
     "-oooo-" # TSS OK
 ]
