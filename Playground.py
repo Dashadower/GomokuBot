@@ -10,7 +10,7 @@ if __name__ == "__main__":
     from main import GameBoard
     from Analyzer import WinChecker
     import time,tkinter,threading
-    from AlphaBeta import AlphaBeta
+    from AlphaBetaReloaded import AlphaBeta
     #from AlphaBetaMultiProcess import AlphaBeta
     from NegaMax import NegaMax
     #from HashTest import AlphaBeta
@@ -19,7 +19,7 @@ if __name__ == "__main__":
 
     #ai = NegaMax(board,"white",3,1)
     ai = AlphaBeta(board,"white",2,1)
-    #ai.InitiateProcess()
+    ai.InitiateProcess()
     threatspace = ThreatSpaceSearch(board,"white")
     refree = WinChecker(board)
 
@@ -39,7 +39,7 @@ if __name__ == "__main__":
                 if not data:
                     pass
                 else:
-                    ai.AddAIStone(data[1])
+                    ai.AddAIStone(data)
                     break
         else:
             data = ai.AddAIStone(threatspace.Check())

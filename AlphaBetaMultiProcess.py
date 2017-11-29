@@ -3,6 +3,7 @@ from main import GameBoard
 from Analyzer import Analyzer,WinChecker
 import time, random, multiprocessing
 from collections import Counter
+
 class AlphaBeta(AICore):
     def __init__(self,initialgamestate,aistonetype, plydepth,tilesearchrange,processlimit,transitionrange):
         AICore.__init__(self, initialgamestate, aistonetype,tilesearchrange)

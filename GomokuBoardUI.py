@@ -98,7 +98,7 @@ if __name__ == "__main__":
     board = GameBoard(10,10)
     root = tkinter.Tk()
     boardui = GomokuBoard(board,root,None)
-
+    boardui.PlayerTurn = True
     boardui.Draw()
 
     root.mainloop()
