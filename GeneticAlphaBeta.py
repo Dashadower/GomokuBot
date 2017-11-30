@@ -1,52 +1,28 @@
 from AICore import AICore
 from main import GameBoard
-from Analyzer import Analyzer,WinChecker
+from GeneticAnalyzerOptimized import Analyzer
+from Analyzer import WinChecker
 import time, random, multiprocessing
 from collections import Counter
 
 class AlphaBeta(AICore):
-    def __init__(self,initialgamestate,aistonetype, plydepth,tilesearchrange):
+    def __init__(self,initialgamestate,aistonetype, plydepth,tilesearchrange,analyzerparameter):
         AICore.__init__(self, initialgamestate, aistonetype,tilesearchrange)
         self.EnemyStoneType = "black" if self.AIStoneType == "white" else "white"
         self.PlyDepth = plydepth
         self.ControlQueue = multiprocessing.Queue()
         self.OpenSearchRange = tilesearchrange
+        self.analyzerparameter = analyzerparameter
 
-        self.ReportHook = print
-        self.Process = None
-        self.CommQueue = None
-        self.datalist = []
-        self.PID = None
-    def InitiateProcess(self):
 
-        q = multiprocessing.Queue()
-
-        self.CommQueue = q
-        p = multiprocessing.Process(target=AlphaBetaActuator, args=(self.ControlQueue,q, self.AIStoneType, self.PlyDepth, self.OpenSearchRange))
-        p.daemon = True
-        self.Process = p
-        p.start()
-        self.PID = p.pid
-
-        return (self.Process,self.PID)
     def ChooseMove(self):
         moves = self.GetOpenMovesPlus(self.Board, self.OpenSearchRange)
         startedprocesses = len(moves)
-        self.ReportHook("1PLY 검색 타일 수:"+str(startedprocesses))
         #gboard = self.GenerateCustomGameBoard(self.Board,coord,self.AIStoneType)
-        self.CommQueue.put(("START",self.Board))
+        return AlphaBetaActuator(self.AIStoneType,self.PlyDepth,self.OpenSearchRange, self.analyzerparameter).CheckForWork(self.DuplicateBoard(self.Board))
 
 
-    def GetResult(self):
-        try:
-            data = self.ControlQueue.get_nowait()
-        except:
-            return False
-        else:
-            if data:
-                return data
-            else:
-                return False
+
 
 class Node():
         def __init__(self, position, value, parent):
@@ -65,36 +41,26 @@ def compare(s, t):
     return Counter(s) == Counter(t)
 
 class AlphaBetaActuator():
-    def __init__(self,ControlQueue,DataQueue,aistonetype,depth,tilesearchrange):
+    def __init__(self,aistonetype,depth,tilesearchrange, analyzerparameter):
         self.AIStoneType = aistonetype
         self.EnemyStoneType = "black" if self.AIStoneType == "white" else "white"
-        self.ControlQueue = ControlQueue
-        self.DataQueue = DataQueue
         self.PlyDepth = depth
         self.OpenSearchRange = tilesearchrange
-        self.CheckForWork()
+        self.analyzer = analyzerparameter
 
-    def CheckForWork(self):
-        while True:
-            data = self.DataQueue.get()
-            if data[0] == "START":
-                board = data[1]
-                self.aiutils = AICore(board, self.AIStoneType, self.OpenSearchRange)
-                startnode = Node(None, None, None)
-                result = self.AlphaBeta(self.aiutils.DuplicateBoard(board),startnode, self.PlyDepth, True,-10000000, 10000000, self.OpenSearchRange)
-                print("*"*10)
-                print(len(startnode.children))
-                result = []
-                for items in startnode.children:
-                    print(items.position, items.value)
-                    result.append((items.position, items.value))
-                result = sorted(result,key=lambda x:x[1],reverse=True)
-                print("RESULT:",result)
-                self.ControlQueue.put(result[0][0])
+    def CheckForWork(self,board):
+            self.aiutils = AICore(board, self.AIStoneType, self.OpenSearchRange)
+            startnode = Node(None, None, None)
+            self.AlphaBeta(self.aiutils.DuplicateBoard(board),startnode, self.PlyDepth, True,-10000000, 10000000, self.OpenSearchRange)
+            result = []
+            for items in startnode.children:
+                result.append((items.value, items.position))
+            result = sorted(result,key=lambda x:x[0],reverse=True)
+            return result[0]
     def AlphaBeta(self,board,node,depth,isMaximizingPlayer,alpha,beta,tilesearchrange):
         #print("CURRENT POSITION",move,isMaximizingPlayer)
         if WinChecker(board).CheckBoth() or depth == 0:
-            ganalyst = Analyzer(board)
+            ganalyst = Analyzer(board, self.analyzer[0],self.analyzer[1],self.analyzer[2],self.analyzer[3])
             return (ganalyst.Grader(self.AIStoneType if isMaximizingPlayer else self.EnemyStoneType)-ganalyst.Grader(self.EnemyStoneType if isMaximizingPlayer else self.AIStoneType))
 
         if isMaximizingPlayer:

@@ -1,8 +1,8 @@
 from AICore import AICore
 from main import GameBoard
-from Analyzer import WinChecker, Analyzer
-#from AnalyzerOptimized import Analyzer
+from Analyzer import Analyzer,WinChecker
 import time, random, multiprocessing
+from collections import Counter
 
 class AlphaBeta(AICore):
     def __init__(self,initialgamestate,aistonetype, plydepth,tilesearchrange):
@@ -10,95 +10,90 @@ class AlphaBeta(AICore):
         self.EnemyStoneType = "black" if self.AIStoneType == "white" else "white"
         self.PlyDepth = plydepth
         self.ControlQueue = multiprocessing.Queue()
-        self.ResultQueue = multiprocessing.Queue()
         self.OpenSearchRange = tilesearchrange
-        self.ReportHook = print
-        self.process = multiprocessing.Process(target=AlphaBetaActuator,args=(self.ControlQueue,self.ResultQueue,self.AIStoneType,self.PlyDepth,self.OpenSearchRange))
-        self.process.daemon = True
-        self.process.start()
+
+
+
     def ChooseMove(self):
-        self.ControlQueue.put(("START",self.Board))
-        """while True:
-            data = self.ControlQueue.get()
-            if data:
-                if data[0] == "START":
-                    self.ControlQueue.put(data)
-                else:
-                    print("GOT DATA",data)
-                    print("FINALIZED DATA",data)
-                    self.AddAIStone(data[1])
-                    break"""
-    def GetResult(self):
-        try:
-
-            data = self.ResultQueue.get_nowait()
-        except:
-            return False
-        else:
+        moves = self.GetOpenMovesPlus(self.Board, self.OpenSearchRange)
+        startedprocesses = len(moves)
+        self.ReportHook("1PLY 검색 타일 수:"+str(startedprocesses))
+        #gboard = self.GenerateCustomGameBoard(self.Board,coord,self.AIStoneType)
+        return AlphaBetaActuator(self.AIStoneType,self.PlyDepth,self.OpenSearchRange).CheckForWork(self.DuplicateBoard(self.Board))
 
 
-            self.ReportHook("GOT DATA "+str(data))
-            #self.AddAIStone(data[1])
-            return data
+
+
+class Node():
+        def __init__(self, position, value, parent):
+            self.position = position
+            self.value = value
+            self.parent = parent
+            self.children = []
+            if self.parent:
+               self.parent.register_child(self)
+        def register_child(self, node):
+            self.children.append(node)
+            node.parent = self
+
+
+def compare(s, t):
+    return Counter(s) == Counter(t)
 
 class AlphaBetaActuator():
-    def __init__(self,ControlQueue,ResultQueue,aistonetype,depth,tilesearchrange):
+    def __init__(self,aistonetype,depth,tilesearchrange):
         self.AIStoneType = aistonetype
         self.EnemyStoneType = "black" if self.AIStoneType == "white" else "white"
-        self.ControlQueue = ControlQueue
-        self.ResultQueue = ResultQueue
         self.PlyDepth = depth
         self.OpenSearchRange = tilesearchrange
-        self.CheckForWork()
-
-    def CheckForWork(self):
-        while True:
-            data = self.ControlQueue.get()
-            if data:
-                if data[0] == "START":
-                    self.aiutils = AICore(data[1],self.AIStoneType,self.OpenSearchRange)
-                    datas = []
-                    for moves in self.aiutils.GetOpenMovesPlus(data[1],self.OpenSearchRange):
-                        #print("NEW GAME BROS!!")
-                        result = self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(self.aiutils.DuplicateBoard(data[1]),moves,self.AIStoneType),moves,self.PlyDepth,False,-10000000,10000000,self.OpenSearchRange)
-                        datas.append((result[0],moves))
-                    current = (-20000000000,("flibbergibbit","datasover1"))
-                    for items in datas:
-                        if int(items[0]) > current[0]:
-                            current = items
-
-                    self.ResultQueue.put(current)
-
-                    print("SENT DATA", current,self.ResultQueue.empty())
 
 
-                elif data == "EXIT":
-                    break
-
-    def AlphaBeta(self,board,move,depth,isMaximizingPlayer,alpha,beta,tilesearchrange):
+    def CheckForWork(self,board):
+            self.aiutils = AICore(board, self.AIStoneType, self.OpenSearchRange)
+            startnode = Node(None, None, None)
+            self.AlphaBeta(self.aiutils.DuplicateBoard(board),startnode, self.PlyDepth, True,-10000000, 10000000, self.OpenSearchRange)
+            result = []
+            for items in startnode.children:
+                print(items.position, items.value)
+                result.append((items.value, items.position))
+            result = sorted(result,key=lambda x:x[0],reverse=True)
+            return result[0]
+    def AlphaBeta(self,board,node,depth,isMaximizingPlayer,alpha,beta,tilesearchrange):
         #print("CURRENT POSITION",move,isMaximizingPlayer)
         if WinChecker(board).CheckBoth() or depth == 0:
-
-            return (Analyzer(board).Grader(self.AIStoneType)-Analyzer(board).Grader(self.EnemyStoneType),move)
+            ganalyst = Analyzer(board)
+            return (ganalyst.Grader(self.AIStoneType if isMaximizingPlayer else self.EnemyStoneType)-ganalyst.Grader(self.EnemyStoneType if isMaximizingPlayer else self.AIStoneType))
 
         if isMaximizingPlayer:
             v = -10000000
             for moves in self.aiutils.GetOpenMovesPlus(board,self.OpenSearchRange):
-                v = max(v,self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(board,moves,self.AIStoneType),moves,depth-1,False, alpha,beta,tilesearchrange)[0])
+                g = Node(moves, None, node)
+                v = max(v,self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(board,moves,self.AIStoneType),g,depth-1,False, alpha,beta,tilesearchrange))
+                g.value = v
                 alpha = max(alpha,v)
                 if beta <= alpha:
                     #print("BETA CUTOFF")
                     break
-            return (v,move)
+            return v
         else:
             v = 10000000
             for moves in self.aiutils.GetOpenMovesPlus(board,self.OpenSearchRange):
-                v = min(v,self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(board,moves,self.EnemyStoneType),moves,depth-1,True,alpha,beta,tilesearchrange)[0])
+                g = Node(moves, None, node)
+                v = min(v,self.AlphaBeta(self.aiutils.GenerateCustomGameBoard(board,moves,self.EnemyStoneType),g,depth-1,True,alpha,beta,tilesearchrange))
+                g.value = v
                 beta = min(beta,v)
                 if beta <= alpha:
                     #print("ALPHA CUTOFF")
                     break
-            return (v,move)
+            return v
+
+
+
+
+
+
+
+
 
 
 

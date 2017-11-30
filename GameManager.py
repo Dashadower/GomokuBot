@@ -15,7 +15,7 @@ class GameManager():
         self.refree = Analyzer.WinChecker(self.AI.Board)
         self.TSS = TSS
     def start(self):
-        self.Writetotext("검색 깊이: "+str(self.AI.PlyDepth)+" + 1수(PLY) 검색 범위: "+str(self.AI.OpenSearchRange)+"칸(TILE)")
+        self.Writetotext("검색 깊이: "+str(self.AI.PlyDepth)+" + 수(PLY) 검색 범위: "+str(self.AI.OpenSearchRange)+"칸(TILE)")
         tkinter.messagebox.showinfo("", "플레이어의 차례입니다")
         self.GomokuBoard.PlayerTurn = True
         self.StartTime = time.time()
@@ -73,7 +73,7 @@ class GameManager():
             self.GomokuBoard.Draw()
             self.MainUI.update()
             if not self.CheckWin():
-                tkinter.messagebox.showinfo("", "플레이어의 차례입니다")
+                #tkinter.messagebox.showinfo("", "플레이어의 차례입니다")
                 self.GomokuBoard.PlayerTurn = True
     def waitforinput(self):
         data = self.AI.GetResult()
@@ -94,7 +94,7 @@ class GameManager():
             self.GomokuBoard.Draw()
             self.MainUI.update()
             if not self.CheckWin():
-                tkinter.messagebox.showinfo("","플레이어의 차례입니다")
+                #tkinter.messagebox.showinfo("","플레이어의 차례입니다")
                 self.GomokuBoard.PlayerTurn = True
     def Writetotext(self,text):
         self.TextField.config(state="normal")

@@ -71,12 +71,12 @@ class AICore():
     def AddHumanStone(self, Position):
         """Updates self.Board by adding a stone to the human stone type"""
         self.Board.AddStone("white" if self.AIStoneType == "black" else "black", Position)
-        print("ADDED HUMAN STONE AT", Position, ",type is ", "white" if self.AIStoneType == "black" else "black")
+        #print("ADDED HUMAN STONE AT", Position, ",type is ", "white" if self.AIStoneType == "black" else "black")
 
     def AddAIStone(self, Position):
         """updates self.Board by adding a stone to the AI stone type"""
         self.Board.AddStone(self.AIStoneType, Position)
-        print("ADDED AI STONE AT",Position,"type is ",self.AIStoneType)
+        #print("ADDED AI STONE AT",Position,"type is ",self.AIStoneType)
 
 class ThreatSpaceSearch():
     def __init__(self,board,aistonetype):

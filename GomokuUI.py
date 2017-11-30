@@ -3,7 +3,7 @@ import tkinter
 from GomokuBoardUI import GomokuBoard
 from main import GameBoard
 from tkinter.ttk import Progressbar
-import AICore,GameManager, multiprocessing, AlphaBetaMultiProcess,AlphaBeta,os,signal
+import AICore,GameManager, multiprocessing, AlphaBeta,AlphaBetaParallel,AlphaBeta,os,signal
 class MainScreen(tkinter.Frame):
     def __init__(self,master,gameboard,gridsize,buffer):
         tkinter.Frame.__init__(self,master)
@@ -46,17 +46,18 @@ def OnNewGame():
         screen.InfoBox.config(state=tkinter.NORMAL)
         screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBeta): 프로세스 1개 사영\n")
         screen.InfoBox.config(state=tkinter.DISABLED)
-        pids = None
+
     elif MODE == "MULTIPROCESS":
         print("MULTIPROCESS")
         screen.InfoBox.config(state=tkinter.NORMAL)
         screen.InfoBox.insert(tkinter.END, "인공지능 설정(AlphaBetaMultiProcess): 다중 프로세스 사용(프로세스 %d개), 전환 범위: %d수\n"%(MAXPROCESSES,MULTIPROCESS_CUTOFF))
         screen.InfoBox.config(state=tkinter.DISABLED)
-        ai = AlphaBetaMultiProcess.AlphaBeta(gboard, "white", DIFFICULTY, SEARCHRANGE,MAXPROCESSES,MULTIPROCESS_CUTOFF)
-        processes,pids = ai.InitiateProcess()
+        ai = AlphaBetaParallel.AlphaBeta(gboard, "white", DIFFICULTY, SEARCHRANGE)
+        result = ai.InitiateProcess()
+        processes, pids = [result[0]], [result[1]]
 
         screen.InfoBox.config(state=tkinter.NORMAL)
-        screen.InfoBox.insert(tkinter.END, "%s\n"%(processes))
+        screen.InfoBox.insert(tkinter.END, "%s PID %s\n"%(processes, pids))
         screen.InfoBox.config(state=tkinter.DISABLED)
         
     mgr = GameManager.GameManager(root,ai,AICore.ThreatSpaceSearch(gboard,"white"),screen.GomokuBoard,screen.InfoBox,screen.progressbar,pids)
