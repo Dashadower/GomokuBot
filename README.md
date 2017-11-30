@@ -1,4 +1,6 @@
 # GomokuBot
+
+GomokuBot's development has been finished. Please see https://github.com/Dashadower/GomokuReloaded for a new bot based on this project.
 Python bot to play Gomoku using minimax, AlphaBeta search
 
 
